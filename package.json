@@ -4,7 +4,9 @@
   "description": "REST API to serve data to the different app versions. Uses Express and MariaDB as database.",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node ./dist/server.js\""
+    "dev": "tsc-watch --onSuccess \"node ./dist/server.js\"",
+    "build": "tsc",
+    "heroku-cleanup": "rm -rf ./src"
   },
   "repository": {
     "type": "git",
