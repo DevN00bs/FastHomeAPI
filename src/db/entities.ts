@@ -84,3 +84,23 @@ interface PhotoData {
  * @property {string} description - A brief description of the photo. This is optional
  */
 function photoDocs() {}
+
+export interface NewUserData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+/**
+ * Used to register new users only
+ * @typedef {object} NewUserData
+ * @property {string} username - User's username
+ * @property {string} email - User's email. Both client and server check if it's valid
+ * @property {string} password - User's password. Will be encrypted server-side
+ */
+function newUserDocs() {}
+
+export interface ControllerResponse<T> {
+  isSuccessful: boolean;
+  result?: T;
+}
