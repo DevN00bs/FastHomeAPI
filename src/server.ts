@@ -1,9 +1,13 @@
 import expressJSDocSwagger from "express-jsdoc-swagger";
 import express from "express";
 import cors from "cors";
+import {  delProperty, getId, getProperties, postProperty, updatePropertie } from "./controllers/properties";
+import bodyParser from "body-parser";
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(bodyParser.json({ limit: '800mb' }));
 
 expressJSDocSwagger(app)({
   info: {
@@ -32,12 +36,6 @@ expressJSDocSwagger(app)({
 
 app.use(cors());
 
-app.all("*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Contet-Type");
-  next();
-});
 
 //login.
 
@@ -53,39 +51,27 @@ app.post('/v1/register', (req, res) => {
 
 //Properties.
 app.get('/v1/properties', (req,res)=>{
-  res.send('Show all properties')
+  getProperties(res);
 });
 
-app.get('/v1/properties/1',(req,res) =>{
-  res.send('Property with id');
-});
-
-app.get('/v1/properties/2', (req,res)=>{
-  res.send('Vendor info ');
-})
-
-app.get('/v1/properties/3', (req,res)=>{
-  res.send('available');
-})
-
-app.get('/v1/properties/4', (req,res)=>{
-  res.send('price')
+app.get('/v1/properties/:propertyId',(req,res)=>{
+  let id = req.params.propertyId
+   getId(res,id)
 })
 
 app.post("/v1/properties", (req, res) => {
-  console.log("new property added");
-  res.send('added')
+  postProperty(req,res);
 });
 
-app.put("/v1/properties/:propertyId", (req, res) => {
-  console.log("Edited succesfully.");
-  res.send("Edited succesfully.");
+app.put('/v1/properties/:propertyId', (req,res) => {
+  let id = req.params.propertyId;
+  updatePropertie(req,res,id);
 });
 
-app.delete("/v1/properties/:propertyId", (req, res) => {
-  console.log("Property deleted");
-  res.send("deleted");
-});
+app.delete('/v1/properties/:propertyId',(req,res)=>{
+   let id = req.params.propertyId
+  delProperty(req,id,res);
+})
 
 //Profiles.
 app.get("/v1/profiles", (req, res) => {
