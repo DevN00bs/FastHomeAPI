@@ -27,7 +27,7 @@ expressJSDocSwagger(app)({
       description: "The main API's server",
     },
     {
-      url: "http://localhost",
+      url: "http://localhost:" + port,
       description: "Used for testing",
     },
   ],
