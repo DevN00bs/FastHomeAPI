@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  getProperties,
+  getPropertiesList,
   getId,
   postProperty,
   updatePropertie,
@@ -9,8 +9,14 @@ import {
 
 const router = Router();
 
-router.get("/properties", (req, res) => {
-  getProperties(res);
+router.get("/properties", async (req, res) => {
+  const response = await getPropertiesList();
+
+  if (!response.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  res.json(response.result);
 });
 
 router.get("/property/:id", (req, res) => {

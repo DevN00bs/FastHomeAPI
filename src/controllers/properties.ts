@@ -1,7 +1,7 @@
-import { BasicPropertyData, PropertyData } from "../db/entities";
+import { BasicPropertyData, ControllerResponse, PropertyData } from "../db/entities";
 import pool from "../db/pool";
 
-export async function getProperties(res: any) {
+export async function getPropertiesList(): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
 
   try {
@@ -9,11 +9,10 @@ export async function getProperties(res: any) {
     const result: BasicPropertyData[] = await conn.query(
       "SELECT * FROM BasicPropertyData"
     );
-    res.send(result);
-    return { success: true, result} ;
+    return { isSuccessful: true, result} ;
   } catch (e) {
     console.error("Something went wrong", e);
-    return { success: false };
+    return { isSuccessful: false };
   } finally {
     conn?.release();
   }
