@@ -2,12 +2,11 @@ import expressJSDocSwagger from "express-jsdoc-swagger";
 import express from "express";
 import cors from "cors";
 import {  delProperty, getId, getProperties, postProperty, updatePropertie } from "./controllers/properties";
-import bodyParser from "body-parser";
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(bodyParser.json({ limit: '800mb' }));
+app.use(express.json({ limit: '1mb' }));
 
 expressJSDocSwagger(app)({
   info: {
