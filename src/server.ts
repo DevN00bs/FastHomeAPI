@@ -36,7 +36,7 @@ expressJSDocSwagger(app)({
 app.use(cors());
 
 // Routers declarations
-app.use(propertiesRoutes)
+app.use("/api", propertiesRoutes)
 
 //login.
 

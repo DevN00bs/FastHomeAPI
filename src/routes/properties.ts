@@ -9,26 +9,26 @@ import {
 
 const router = Router();
 
-router.get("/v1/properties", (req, res) => {
+router.get("/properties", (req, res) => {
   getProperties(res);
 });
 
-router.get("/v1/properties/:propertyId", (req, res) => {
-  let id = req.params.propertyId;
+router.get("/property/:id", (req, res) => {
+  let id = req.params.id;
   getId(res, id);
 });
 
-router.post("/v1/properties", (req, res) => {
+router.post("/property", (req, res) => {
   postProperty(req, res);
 });
 
-router.put("/v1/properties/:propertyId", (req, res) => {
-  let id = req.params.propertyId;
+router.put("/property/:id", (req, res) => {
+  let id = req.params.id;
   updatePropertie(req, res, id);
 });
 
-router.delete("/v1/properties/:propertyId", (req, res) => {
-  let id = req.params.propertyId;
+router.delete("/property/:id", (req, res) => {
+  let id = req.params.id;
   delProperty(req, id, res);
 });
 
