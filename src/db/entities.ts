@@ -84,3 +84,8 @@ interface PhotoData {
  * @property {string} description - A brief description of the photo. This is optional
  */
 function photoDocs() {}
+
+export interface ControllerResponse<T> {
+  isSuccessful: boolean;
+  result?: T;
+}
