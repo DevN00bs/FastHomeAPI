@@ -1,7 +1,7 @@
 import expressJSDocSwagger from "express-jsdoc-swagger";
+import propertiesRoutes from "./routes/properties"
 import express from "express";
 import cors from "cors";
-import {  delProperty, getId, getProperties, postProperty, updatePropertie } from "./controllers/properties";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,6 +35,8 @@ expressJSDocSwagger(app)({
 
 app.use(cors());
 
+// Routers declarations
+app.use(propertiesRoutes)
 
 //login.
 
@@ -47,30 +49,6 @@ app.post('/v1/register', (req, res) => {
   console.log("register");
   res.send('register')
 });
-
-//Properties.
-app.get('/v1/properties', (req,res)=>{
-  getProperties(res);
-});
-
-app.get('/v1/properties/:propertyId',(req,res)=>{
-  let id = req.params.propertyId
-   getId(res,id)
-})
-
-app.post("/v1/properties", (req, res) => {
-  postProperty(req,res);
-});
-
-app.put('/v1/properties/:propertyId', (req,res) => {
-  let id = req.params.propertyId;
-  updatePropertie(req,res,id);
-});
-
-app.delete('/v1/properties/:propertyId',(req,res)=>{
-   let id = req.params.propertyId
-  delProperty(req,id,res);
-})
 
 //Profiles.
 app.get("/v1/profiles", (req, res) => {
