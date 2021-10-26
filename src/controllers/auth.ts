@@ -2,6 +2,7 @@ import {
   ControllerResponse,
   RegistrationData,
   LoginData,
+  LoginResult,
 } from "../db/entities";
 import pool from "../db/pool";
 import bcrypt from "bcrypt";
@@ -52,7 +53,7 @@ export async function checkIfUserExists(
 
 export async function loginUser(
   data: LoginData
-): Promise<ControllerResponse<string>> {
+): Promise<ControllerResponse<LoginResult>> {
   let conn;
 
   try {
@@ -63,12 +64,15 @@ export async function loginUser(
     );
 
     if (!(await bcrypt.compare(data.password, userData[0].encPassword))) {
-      return { isSuccessful: false };
+      return { isSuccessful: false, result: { passwordsMatch: false } };
     }
 
     return {
       isSuccessful: true,
-      result: jwt.sign(userData[0].userId, process.env.SECRET!),
+      result: {
+        passwordsMatch: true,
+        token: jwt.sign(userData[0].userId, process.env.SECRET!),
+      },
     };
   } catch (error) {
     console.error("Something went wrong", error);
