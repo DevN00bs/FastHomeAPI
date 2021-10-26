@@ -24,3 +24,23 @@ export async function createUser(
     conn?.release();
   }
 }
+
+export async function checkIfUserExists(
+  username: string
+): Promise<ControllerResponse<boolean>> {
+  let conn;
+
+  try {
+    conn = await pool.getConnection();
+    const userData = await conn.query(
+      "SELECT emailVerified FROM Users WHERE username = ?",
+      [username]
+    );
+    return { isSuccessful: true, result: Boolean(userData[0].emailVerified) };
+  } catch (error) {
+    console.error("Something went wrong", error);
+    return { isSuccessful: false };
+  } finally {
+    conn?.release();
+  }
+}
