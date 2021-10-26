@@ -1,9 +1,9 @@
-import { ControllerResponse, NewUserData } from "../db/entities";
+import { ControllerResponse, RegistrationData } from "../db/entities";
 import pool from "../db/pool";
 import bcrypt from "bcrypt";
 
 export async function createUser(
-  data: NewUserData
+  data: RegistrationData
 ): Promise<ControllerResponse<void>> {
   let conn;
 

@@ -85,7 +85,7 @@ interface PhotoData {
  */
 function photoDocs() {}
 
-export interface NewUserData {
+export interface RegistrationData {
   username: string;
   email: string;
   password: string;
@@ -93,12 +93,12 @@ export interface NewUserData {
 
 /**
  * Used to register new users only
- * @typedef {object} NewUserData
+ * @typedef {object} RegistrationData
  * @property {string} username - User's username
  * @property {string} email - User's email. Both client and server check if it's valid
  * @property {string} password - User's password. Will be encrypted server-side
  */
-function newUserDocs() {}
+function registrationDocs() {}
 
 export interface ControllerResponse<T> {
   isSuccessful: boolean;
