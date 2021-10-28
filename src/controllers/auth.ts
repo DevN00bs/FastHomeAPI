@@ -141,3 +141,40 @@ export async function verifyMail(
     conn?.release();
   }
 }
+
+export async function sendPasswordEmail(
+  email: string
+): Promise<ControllerResponse<boolean>> {
+  let conn;
+  const expiration = new Date();
+  expiration.setMinutes(expiration.getMinutes() + 10);
+
+  try {
+    conn = await pool.getConnection();
+    const userData = await conn.query(
+      "SELECT userId FROM Users WHERE email = ?",
+      [email]
+    );
+
+    const mail = await mailer.sendMail({
+      from: '"FastHome" <' + process.env.MAIL_USER + ">",
+      to: email,
+      subject: "Password restoration",
+      text:
+        "You requested a password restoration for your account. In case you didn't, you can safely ignore this email.\nIf you did, please click on the link below:\nhttp://localhost:5000/forgot/" +
+        userData[0].userId +
+        expiration.getTime().toString() +
+        crypto
+          .createHash("md5")
+          .update(userData[0].userId + expiration.getTime().toString())
+          .digest("hex")
+          .substr(0, 5),
+    });
+    return { isSuccessful: true, result: mail.accepted[0] === email };
+  } catch (error) {
+    console.error("Something went wrong", error);
+    return { isSuccessful: false };
+  } finally {
+    conn?.release();
+  }
+}
