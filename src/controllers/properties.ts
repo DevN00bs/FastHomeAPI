@@ -23,7 +23,7 @@ export async function getId(res: any, id: any) {
 
   try {
     conn = await pool.getConnection();
-    const result: BasicPropertyData[] = await conn.query(
+    const result: PropertyData[] = await conn.query(
       `SELECT * FROM Properties WHERE propertyId=${id}`
     );
     res.send(result);
@@ -35,6 +35,7 @@ export async function getId(res: any, id: any) {
     conn?.release();
   }
 };
+
 export async function postProperty(req: any, res: any) {
   let conn;
   let address = req.body.address;
@@ -57,9 +58,7 @@ export async function postProperty(req: any, res: any) {
     conn = await pool.getConnection();
     const result: PropertyData[] = await conn.query(
       `INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,buyerUserId,contractType,currencyId) VALUES("${address}","${description}",${price},${latitude},${longitude},${terrainHeight},${terrainWidth},${bedroomAmount}, ${bathroomAmount},${floorAmount},${garageSize},${vendorUserId},${buyerUserId},${contractType},${currencyId})`
-      
       );
-      //(photoURL,address,description,terrainHeight, terrainWidth,price,currencySymbol,currencyCode,contractType,bedroomAmount,bathroomAmount,floorAmount,garageSize)
     res.send(result);
     return { success: true, result} ;
   } catch (e) {

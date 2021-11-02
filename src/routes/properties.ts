@@ -61,14 +61,79 @@ router.get("/properties", async (req, res) => {
   res.json(response.result);
 });
 
-router.get("/property/:id", (req, res) => {
+// #region Route docs
+/**
+ * GET /api/property/{id}
+ * @tags Properties
+ * @summary Return details of one selected property based on the ID
+ * @param {integer} id.path.required Numeric Id of the property
+ * @return {array<PropertyData>} 200 - Everything went ok, and it returns property details. See example below
+ * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example response - 200 - An example of a property
+ * [{
+      "propertyId": 1,
+      "address": "158 Main Street",
+      "description": "lol",
+      "price": 8500,
+      "latitude": 0,
+      "longitude": 0,
+      "terrainHeight": 7,
+      "terrainWidth": 9,
+      "bedroomAmount": 1,
+      "bathroomAmount": 1,
+      "floorAmount": 1,
+      "garageSize": 1,
+      "vendorUserId": 1,
+      "buyerUserId": null,
+      "contractType": 1,
+      "currencyId": 1
+   }]
+ */
+// #endregion
+
+router.get("/property/:id", async (req, res) => {
   let id = req.params.id;
-  getId(res, id);
+
+  const response = await getId(res, id);
+
+  if (!response.success) {
+    return res.sendStatus(500);
+  }
+
+  res.json(response.result);
 });
+
+// #region Route docs
+/**
+ * POST /api/property
+ * @tags Properties
+ * @summary Create a new property with all the details
+ * @param {array<InfoProperty>} request.body.required
+ * @return {array} 200 - Everything went ok, and it returns property details. See example below
+ * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example response - 200 - Response from the API
+  {
+    "affectedRows":1,
+    "insertedId":"#id"
+  }
+ */
+// #endregion
 
 router.post("/property", (req, res) => {
   postProperty(req, res);
 });
+
+// #region Route docs
+/**
+ * PUT /api/property/:id
+ * @tags Properties
+ * @summary Edit the details of a property with the given ID
+ * @param {integer} id.path.required Numeric Id of the property
+ * @param {array<InfoProperty>} request.body.required
+ * @return {array<InfoProperty>} 200 - Everything went ok, and it returns property details. See example below
+ * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ */
+// #endregion
 
 router.put("/property/:id", (req, res) => {
   let id = req.params.id;
