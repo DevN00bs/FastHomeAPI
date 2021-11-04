@@ -19,11 +19,11 @@ expressJSDocSwagger(app)({
     },
   },
   baseDir: __dirname,
-  filesPattern: "./**/*.js",
+  filesPattern: ["./entities/*.js", "./routes/*.js"],
   swaggerUIPath: "/docs",
   servers: [
     {
-      url: "https://real-state-api.herokuapp.com",
+      url: process.env.HOST!,
       description: "The main API's server",
     },
     {
