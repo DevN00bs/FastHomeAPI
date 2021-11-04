@@ -1,6 +1,6 @@
 import { BasicPropertyData, PropertyData } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
-import pool from "../db/pool";
+import pool from "../conf/db";
 
 export async function getPropertiesList(): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
