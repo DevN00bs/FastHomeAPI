@@ -70,6 +70,8 @@ router.get("/properties", async (req, res) => {
  * @summary Return details of one selected property based on the ID
  * @param {integer} id.path.required Numeric Id of the property
  * @return {PropertyData} 200 - Everything went ok, and it returns property details. See example below
+ * @return {string} 400 - You sent something that wasn't a number. Please check your request
+ * @return {string} 404 - A property with the id provided does not exists on the database
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
@@ -95,13 +97,21 @@ router.get("/properties", async (req, res) => {
 router.get("/property/:id", async (req, res) => {
   let id = parseInt(req.params.id);
 
+  if (Number.isNaN(id)) {
+    return res.sendStatus(400);
+  }
+
   const response = await getPropertyById(id);
 
-  if (!response.success) {
+  if (!response.isSuccessful) {
     return res.sendStatus(500);
   }
 
-  res.json(response.result);
+  if (response.result!.length <= 0) {
+    return res.sendStatus(404);
+  }
+
+  res.json(response.result![0]);
 });
 
 // #region Route docs

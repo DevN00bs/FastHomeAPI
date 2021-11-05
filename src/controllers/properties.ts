@@ -19,7 +19,7 @@ export async function getPropertiesList(): Promise<ControllerResponse<BasicPrope
   }
 };
 
-export async function getPropertyById(id: number) {
+export async function getPropertyById(id: number): Promise<ControllerResponse<PropertyData[]>> {
   let conn;
 
   try {
@@ -28,10 +28,10 @@ export async function getPropertyById(id: number) {
       "SELECT * FROM Properties WHERE propertyId=?",
       [id]
     );
-    return { success: true, result: result[0] } ;
+    return { isSuccessful: true, result } ;
   } catch (e) {
     console.error("Something went wrong", e);
-    return { success: false };
+    return { isSuccessful: false };
   } finally {
     conn?.release();
   }
