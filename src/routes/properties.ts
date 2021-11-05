@@ -19,6 +19,7 @@ const router = Router();
  * @example response - 200 - An example list of properties
  * [
  * {
+ *   "propertyId": 1,
  *   "photoURL": "https://i.imgur.com/9y2CCs7.jpeg",
  *   "address": "158 Main Street",
  *   "username": "testuser",
@@ -34,6 +35,7 @@ const router = Router();
  *   "garageSize": 1
  * },
  * {
+ *   "propertyId": 2,
  *   "photoURL": "https://i.imgur.com/ZgS3j4H.jpeg",
  *   "address": "877 Vanilla Avenue",
  *   "username": "testuser",
@@ -71,26 +73,25 @@ router.get("/properties", async (req, res) => {
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
-      "propertyId": 1,
-      "address": "158 Main Street",
-      "description": "lol",
-      "price": 8500,
-      "latitude": 28.661655,
-      "longitude": -106.040184,
-      "terrainHeight": 7.5,
-      "terrainWidth": 9.25,
-      "bedroomAmount": 1,
-      "bathroomAmount": 1,
-      "floorAmount": 1,
-      "garageSize": 1,
-      "vendorUserId": 1,
-      "buyerUserId": null,
-      "contractType": 1,
-      "currencyId": 1
-   }
+ *   "address": "158 Main Street",
+ *   "description": "lol",
+ *   "username": "testuser",
+ *   "userRating": 4.5,
+ *   "price": 8500,
+ *   "currencySymbol": "$",
+ *   "currencyCode": "MXN",
+ *   "latitude": 28.661655,
+ *   "longitude": -106.040184,
+ *   "terrainHeight": 7.5,
+ *   "terrainWidth": 9.25,
+ *   "bedroomAmount": 1,
+ *   "bathroomAmount": 1,
+ *   "floorAmount": 1,
+ *   "garageSize": 1,
+ *   "contractType": 1
+ * }
  */
 // #endregion
-
 router.get("/property/:id", async (req, res) => {
   let id = parseInt(req.params.id);
 
@@ -108,33 +109,26 @@ router.get("/property/:id", async (req, res) => {
  * POST /api/property
  * @tags Properties
  * @summary Create a new property with all the details
- * @param {array<InfoProperty>} request.body.required
- * @return {array} 200 - Everything went ok, and it returns property details. See example below
+ * @param {PropertyRequest} request.body.required
+ * @return {string} 201 - Everything went ok, the property was added
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
- * @example response - 200 - Response from the API
-  {
-    "affectedRows":1,
-    "insertedId":"#id"
-  }
  */
 // #endregion
-
 router.post("/property", (req, res) => {
   postProperty(req, res);
 });
 
 // #region Route docs
 /**
- * PUT /api/property/:id
+ * PUT /api/property/{id}
  * @tags Properties
  * @summary Edit the details of a property with the given ID
  * @param {integer} id.path.required Numeric Id of the property
- * @param {array<InfoProperty>} request.body.required
- * @return {array<InfoProperty>} 200 - Everything went ok, and it returns property details. See example below
+ * @param {PropertyRequest} request.body.required
+ * @return 204 - Everything went ok, the edition was successful
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-
 router.put("/property/:id", (req, res) => {
   let id = req.params.id;
   updatePropertie(req, res, id);
