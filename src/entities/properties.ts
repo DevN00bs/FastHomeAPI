@@ -1,6 +1,5 @@
 abstract class Property {
   address!: string;
-  username!: string;
   terrainHeight!: number;
   terrainWidth!: number;
   price!: number;
@@ -9,8 +8,6 @@ abstract class Property {
   bathroomAmount!: number;
   garageSize!: number;
   floorAmount!: number;
-  latitude!: number;
-  longitude!: number;
 }
 
 /**
@@ -33,9 +30,12 @@ abstract class Property {
  * @property {number} longitude - Latitude of the property's coordinates. Use it for create a map
  */
 export class PropertyData extends Property {
-  userRating!: string;
+  username!: string;
+  userRating!: number;
   currencySymbol!: string;
   currencyCode!: string;
+  latitude!: number;
+  longitude!: number;
 }
 
 /**
@@ -52,12 +52,14 @@ export class PropertyData extends Property {
  * @property {number} bathroomAmount - The number of bathrooms available in the property.
  * @property {number} floorAmount - The number of floors that the property has
  * @property {number} garageSize - The number of cars that fit in the property's garage.
- * @property {number} vendorUserId - Id number relationated to the vendor details
  * @property {number} contractType - Id of the type of property's contract
  * @property {number} currencyId - Id of the type of price currency
  */
 export class PropertyRequest extends Property {
-  currencyId!: string;
+  description!: string;
+  currencyId!: number;
+  latitude!: number;
+  longitude!: number;
 }
 
 /**
