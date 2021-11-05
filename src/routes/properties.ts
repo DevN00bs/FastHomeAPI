@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   getPropertiesList,
-  getId,
+  getPropertyById,
   postProperty,
   updatePropertie,
   delProperty,
@@ -67,18 +67,18 @@ router.get("/properties", async (req, res) => {
  * @tags Properties
  * @summary Return details of one selected property based on the ID
  * @param {integer} id.path.required Numeric Id of the property
- * @return {array<PropertyData>} 200 - Everything went ok, and it returns property details. See example below
+ * @return {PropertyData} 200 - Everything went ok, and it returns property details. See example below
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
- * [{
+ * {
       "propertyId": 1,
       "address": "158 Main Street",
       "description": "lol",
       "price": 8500,
-      "latitude": 0,
-      "longitude": 0,
-      "terrainHeight": 7,
-      "terrainWidth": 9,
+      "latitude": 28.661655,
+      "longitude": -106.040184,
+      "terrainHeight": 7.5,
+      "terrainWidth": 9.25,
       "bedroomAmount": 1,
       "bathroomAmount": 1,
       "floorAmount": 1,
@@ -87,14 +87,14 @@ router.get("/properties", async (req, res) => {
       "buyerUserId": null,
       "contractType": 1,
       "currencyId": 1
-   }]
+   }
  */
 // #endregion
 
 router.get("/property/:id", async (req, res) => {
-  let id = req.params.id;
+  let id = parseInt(req.params.id);
 
-  const response = await getId(res, id);
+  const response = await getPropertyById(id);
 
   if (!response.success) {
     return res.sendStatus(500);

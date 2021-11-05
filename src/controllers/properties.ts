@@ -19,16 +19,16 @@ export async function getPropertiesList(): Promise<ControllerResponse<BasicPrope
   }
 };
 
-export async function getId(res: any, id: any) {
+export async function getPropertyById(id: number) {
   let conn;
 
   try {
     conn = await pool.getConnection();
     const result: PropertyData[] = await conn.query(
-      `SELECT * FROM Properties WHERE propertyId=${id}`
+      "SELECT * FROM Properties WHERE propertyId=?",
+      [id]
     );
-    res.send(result);
-    return { success: true, result} ;
+    return { success: true, result: result[0] } ;
   } catch (e) {
     console.error("Something went wrong", e);
     return { success: false };
