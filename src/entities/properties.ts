@@ -14,6 +14,7 @@ abstract class Property {
  * This entity contains all data of a property. Use this on the details page
  * @typedef {object} PropertyData
  * @property {string} address - Address of the property. Used as the page's title
+ * @property {string} description - Description of property, not characteristics.
  * @property {string} username - User that is selling the property
  * @property {number} userRating - Average score of a user based on buyers' reviews
  * @property {number} terrainHeight - Height of the property's terrain in meters
@@ -30,6 +31,7 @@ abstract class Property {
  * @property {number} longitude - Latitude of the property's coordinates. Use it for create a map
  */
 export class PropertyData extends Property {
+  description!: string;
   username!: string;
   userRating!: number;
   currencySymbol!: string;
