@@ -120,6 +120,7 @@ router.get("/property/:id", async (req, res) => {
  * POST /api/property
  * @tags Properties
  * @summary Create a new property with all the details
+ * @deprecated
  * @param {PropertyRequest} request.body.required
  * @return {string} 201 - Everything went ok, the property was added
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
@@ -134,6 +135,7 @@ router.post("/property", (req, res) => {
  * PUT /api/property/{id}
  * @tags Properties
  * @summary Edit the details of a property with the given ID
+ * @deprecated
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
  * @return 204 - Everything went ok, the edition was successful
