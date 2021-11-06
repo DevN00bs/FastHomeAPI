@@ -75,6 +75,7 @@ router.get("/properties", async (req, res) => {
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
+ *   "propertyId": 1,
  *   "address": "158 Main Street",
  *   "description": "lol",
  *   "username": "testuser",

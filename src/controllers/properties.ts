@@ -25,7 +25,7 @@ export async function getPropertyById(id: number): Promise<ControllerResponse<Pr
   try {
     conn = await pool.getConnection();
     const result: PropertyData[] = await conn.query(
-      "SELECT * FROM Properties WHERE propertyId=?",
+      "SELECT * FROM PropertyData WHERE propertyId = ?",
       [id]
     );
     return { isSuccessful: true, result } ;
