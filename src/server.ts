@@ -1,8 +1,12 @@
 import expressJSDocSwagger from "express-jsdoc-swagger";
+import propertiesRoutes from "./routes/properties";
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(express.json({ limit: "1mb" }));
 
 expressJSDocSwagger(app)({
   info: {
@@ -15,19 +19,24 @@ expressJSDocSwagger(app)({
     },
   },
   baseDir: __dirname,
-  filesPattern: "./**/*.js",
+  filesPattern: ["./entities/*.js", "./routes/*.js"],
   swaggerUIPath: "/docs",
   servers: [
     {
-      url: "https://real-state-api.herokuapp.com",
+      url: process.env.HOST!,
       description: "The main API's server",
     },
     {
-      url: "http://localhost",
+      url: "http://localhost:" + port,
       description: "Used for testing",
     },
   ],
 });
+
+app.use(cors());
+
+// Routers declarations
+app.use("/api", propertiesRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port " + port);

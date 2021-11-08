@@ -1,13 +1,9 @@
-import {
-  ControllerResponse,
-  RegistrationData,
-  LoginData,
-  LoginResult,
-} from "../db/entities";
-import pool from "../db/pool";
+import { RegistrationData, LoginData, LoginResult } from "../entities/auth";
+import { ControllerResponse } from "../entities/controller";
+import pool from "../conf/email";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import mailer from "../db/email";
+import mailer from "../conf/email";
 import crypto from "crypto";
 
 export async function createUser(
