@@ -1,5 +1,9 @@
+import { IsEmail, IsString } from "class-validator";
+
 abstract class User {
+  @IsString()
   username!: string;
+  @IsString()
   password!: string;
 }
 
@@ -11,12 +15,13 @@ abstract class User {
  * @property {string} password - User's password. Will be encrypted server-side
  */
 export class RegistrationData extends User {
+  @IsEmail()
   email!: string;
 }
 
 export interface LoginResult {
-  passwordsMatch: boolean
-  token?: string
+  passwordsMatch: boolean;
+  token?: string;
 }
 
 export class LoginData extends User {}

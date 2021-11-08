@@ -1,5 +1,6 @@
 import expressJSDocSwagger from "express-jsdoc-swagger";
 import propertiesRoutes from "./routes/properties";
+import authRoutes from "./routes/auth";
 import express from "express";
 import cors from "cors";
 
@@ -40,6 +41,7 @@ app.use(cors());
 
 // Routers declarations
 app.use("/api", propertiesRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port " + port);
