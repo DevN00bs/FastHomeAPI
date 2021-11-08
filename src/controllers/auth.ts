@@ -1,6 +1,6 @@
 import { RegistrationData, LoginData, LoginResult } from "../entities/auth";
 import { ControllerResponse } from "../entities/controller";
-import pool from "../conf/email";
+import pool from "../conf/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mailer from "../conf/email";
