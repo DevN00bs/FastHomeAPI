@@ -3,6 +3,9 @@ import propertiesRoutes from "./routes/properties";
 import express from "express";
 import cors from "cors";
 
+import "reflect-metadata";
+import "es6-shim";
+
 const app = express();
 const port = process.env.PORT || 5000;
 
