@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mailer from "../conf/email";
 import crypto from "crypto";
+import path from "path";
 
 export async function createUser(
   data: RegistrationData
@@ -148,7 +149,7 @@ export async function sendPasswordEmail(
   try {
     conn = await pool.getConnection();
     const userData = await conn.query(
-      "SELECT userId FROM Users WHERE email = ?",
+      "SELECT userId, username FROM Users WHERE email = ?",
       [email]
     );
 
@@ -156,15 +157,18 @@ export async function sendPasswordEmail(
       from: '"FastHome" <' + process.env.MAIL_USER + ">",
       to: email,
       subject: "Password restoration",
-      text:
-        "You requested a password restoration for your account. In case you didn't, you can safely ignore this email.\nIf you did, please click on the link below:\nhttp://localhost:5000/forgot/" +
-        userData[0].userId +
-        expiration.getTime().toString() +
-        crypto
-          .createHash("md5")
-          .update(userData[0].userId + expiration.getTime().toString())
-          .digest("hex")
-          .substr(0, 5),
+      template: "password",
+      context: {
+        username: userData[0].username,
+        link: process.env.FRONT + "/forgot/" + userData[0].userId,
+      },
+      attachments: [
+        {
+          filename: "logo.png",
+          path: path.resolve(__dirname, "..", "..", "assets", "logo.png"),
+          cid: "logo@fasthome",
+        },
+      ],
     });
     return { isSuccessful: true, result: mail.accepted[0] === email };
   } catch (error) {
