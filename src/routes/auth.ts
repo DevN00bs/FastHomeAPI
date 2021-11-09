@@ -16,7 +16,7 @@ router.post("/register", validation(RegistrationData), async (req, res) => {
 });
 
 router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
-  const mail = await sendPasswordEmail(res.locals.data);
+  const mail = await sendPasswordEmail(res.locals.data.email);
 
   if (!mail.isSuccessful) {
     return res.sendStatus(500);

@@ -143,8 +143,6 @@ export async function sendPasswordEmail(
   email: string
 ): Promise<ControllerResponse<boolean>> {
   let conn;
-  const expiration = new Date();
-  expiration.setMinutes(expiration.getMinutes() + 10);
 
   try {
     conn = await pool.getConnection();
@@ -164,7 +162,7 @@ export async function sendPasswordEmail(
       template: "password",
       context: {
         username: userData[0].username,
-        link: process.env.FRONT + "/forgot/" + userData[0].userId,
+        link: await createURL("forgot", userData[0].userId),
       },
       attachments: [
         {
@@ -181,4 +179,19 @@ export async function sendPasswordEmail(
   } finally {
     conn?.release();
   }
+}
+
+async function createURL(purpose: string, userId: number): Promise<string> {
+  const token = jwt.sign({ userId, purpose }, process.env.SECRET!, {
+    expiresIn: "11m",
+  });
+
+  const conn = await pool.getConnection();
+  conn.query("UPDATE Users SET token = ? WHERE userId = ?", [
+    token.substring(token.length - 20),
+    userId,
+  ]);
+  conn.release();
+
+  return `${process.env.FRONT}/${purpose}/${token}`;
 }
