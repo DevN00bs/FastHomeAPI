@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createUser, sendPasswordEmail } from "../controllers/auth";
-import { RegistrationData } from "../entities/auth";
+import { ForgotPasswordData, RegistrationData } from "../entities/auth";
 import validation from "../middleware/validation";
 
 const router = Router();
@@ -15,8 +15,8 @@ router.post("/register", validation(RegistrationData), async (req, res) => {
   res.sendStatus(201);
 });
 
-router.post("/forgot", async (req, res) => {
-  const mail = await sendPasswordEmail(req.body.email);
+router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
+  const mail = await sendPasswordEmail(res.locals.data);
 
   if (!mail.isSuccessful) {
     return res.sendStatus(500);

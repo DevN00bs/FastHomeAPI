@@ -25,3 +25,8 @@ export interface LoginResult {
 }
 
 export class LoginData extends User {}
+
+export class ForgotPasswordData {
+  @IsEmail()
+  email!: string;
+}
