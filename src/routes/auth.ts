@@ -22,6 +22,10 @@ router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
     return res.sendStatus(500);
   }
 
+  if (!mail.result) {
+    return res.sendStatus(404);
+  }
+
   res.sendStatus(200);
 });
 

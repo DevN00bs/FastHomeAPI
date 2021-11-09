@@ -153,6 +153,10 @@ export async function sendPasswordEmail(
       [email]
     );
 
+    if (userData.length <= 0) {
+      return { isSuccessful: true, result: false };
+    }
+
     const mail = await mailer.sendMail({
       from: '"FastHome" <' + process.env.MAIL_USER + ">",
       to: email,
@@ -170,7 +174,7 @@ export async function sendPasswordEmail(
         },
       ],
     });
-    return { isSuccessful: true, result: mail.accepted[0] === email };
+    return { isSuccessful: mail.accepted[0] === email, result: true };
   } catch (error) {
     console.error("Something went wrong", error);
     return { isSuccessful: false };
