@@ -97,11 +97,18 @@ export async function sendVerifyMail(
       from: '"FastHome" <' + process.env.MAIL_USER + ">",
       to: userData[0].email,
       subject: "Verify your email address",
-      text:
-        username +
-        ", welcome to FastHome!\nVerify your account with this link:\nhttp://localhost:5000/verify/" +
-        userData[0].userId +
-        crypto.createHash("md5").update(userData[0].email).digest("hex"),
+      template: "verify",
+      context: {
+        username,
+        link: await createURL("verify", userData[0].userId),
+      },
+      attachments: [
+        {
+          filename: "logo.png",
+          path: path.resolve(__dirname, "..", "..", "assets", "logo.png"),
+          cid: "logo@fasthome",
+        },
+      ],
     });
 
     return { isSuccessful: true };

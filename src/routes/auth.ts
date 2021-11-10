@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createUser, sendPasswordEmail } from "../controllers/auth";
+import {
+  createUser,
+  sendPasswordEmail,
+  sendVerifyMail,
+} from "../controllers/auth";
 import { ForgotPasswordData, RegistrationData } from "../entities/auth";
 import validation from "../middleware/validation";
 
@@ -9,6 +13,12 @@ router.post("/register", validation(RegistrationData), async (req, res) => {
   const creation = await createUser(res.locals.data);
 
   if (!creation.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  const mail = await sendVerifyMail(res.locals.data.username);
+
+  if (!mail.isSuccessful) {
     return res.sendStatus(500);
   }
 
