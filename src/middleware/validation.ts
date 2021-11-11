@@ -2,9 +2,11 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { RequestHandler } from "express";
 
-export default function validation(type: any): RequestHandler {
+type source = "body" | "params";
+
+export default function validation(type: any, source: source = "body"): RequestHandler {
   return async (req, res, next) => {
-    const data = plainToClass(type, req.body);
+    const data = plainToClass(type, req[source]);
     const errors = await validate(data);
 
     if (errors.length > 0) {
