@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsJWT, IsString } from "class-validator";
 
 abstract class User {
   @IsString()
@@ -29,4 +29,9 @@ export class LoginData extends User {}
 export class ForgotPasswordData {
   @IsEmail()
   email!: string;
+}
+
+export class LinkData {
+  @IsJWT()
+  token!: string;
 }

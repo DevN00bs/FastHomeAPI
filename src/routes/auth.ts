@@ -5,10 +5,12 @@ import {
   loginUser,
   sendPasswordEmail,
   sendVerifyMail,
+  verifyMail,
 } from "../controllers/auth";
 import {
   ForgotPasswordData,
   LoginData,
+  LinkData,
   RegistrationData,
 } from "../entities/auth";
 import validation from "../middleware/validation";
@@ -68,5 +70,23 @@ router.post("/login", validation(LoginData), async (_req, res) => {
 
   res.json({ token: login.result.token });
 });
+
+router.get(
+  "/verify/:token",
+  validation(LinkData, "params"),
+  async (_req, res) => {
+    const verify = await verifyMail(res.locals.data.token);
+
+    if (!verify.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (!verify.result) {
+      return res.sendStatus(401);
+    }
+
+    res.sendStatus(200);
+  }
+);
 
 export default router;

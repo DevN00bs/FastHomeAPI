@@ -121,21 +121,37 @@ export async function sendVerifyMail(
 }
 
 export async function verifyMail(
-  id: string
+  token: string
 ): Promise<ControllerResponse<boolean>> {
-  let conn;
+  let conn, payload;
 
-  if (id.length < 33) {
+  try {
+    payload = jwt.verify(token, process.env.SECRET!) as jwt.JwtPayload;
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return { isSuccessful: true, result: false };
+    }
+
+    return { isSuccessful: false };
+  }
+
+  if (payload?.purpose !== "verify") {
     return { isSuccessful: true, result: false };
   }
 
-  const parsedId = parseInt(id.substr(0, id.length - 32));
-
   try {
     conn = await pool.getConnection();
+    const dbToken = await conn.query(
+      "SELECT token FROM Users WHERE userId = ?",
+      payload.userId
+    );
+    if (token.substring(token.length - 20) !== dbToken[0].token) {
+      return { isSuccessful: true, result: false };
+    }
+
     const query = await conn.query(
       "UPDATE Users SET emailVerified = 1 WHERE userId = ?",
-      [parsedId]
+      payload.userId
     );
     return { isSuccessful: true, result: query.affectedRows === 1 };
   } catch (error) {
