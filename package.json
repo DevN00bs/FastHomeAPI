@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "npm run views && tsc-watch --onSuccess \"node -r dotenv/config ./dist/server.js\"",
-    "build": "tsc",
+    "build": "tsc && npm run views",
     "heroku-cleanup": "rm -rf ./src",
     "views": "cp -R ./src/views ./dist"
   },
