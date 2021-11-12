@@ -95,6 +95,26 @@ router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
   res.sendStatus(200);
 });
 
+//#region
+/**
+ * POST /api/auth/login
+ * @summary Checks user's credentials and returns a token if they are correct
+ * @tags Authentication
+ * @param {LoginData} request.body.required - Should contain user credentials
+ * @return {object} 200 - Returns a token that identifies the user. This should be saved until the user logs out
+ * @return 401 - User credentials are wrong
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - Example credentials
+ * {
+ *  "username": "testuser",
+ *  "password": "testpass"
+ * }
+ * @example response - 200 - Authorization token
+ * {
+ *  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE4LCJwdXJwb3NlIjoiZm9yZ290IiwiaWF0IjoxNjM2NDc4OTc0LCJleHAiOjE2MzY0Nzk2MzR9.hMRnkOxiIxUgt-jlo-7W6GhmIxmsfBxQh4q_by8CVXA"
+ * }
+ */
+//#endregion
 router.post("/login", validation(LoginData), async (_req, res) => {
   const userCheck = await checkIfUserExists(res.locals.data.username);
 
