@@ -123,23 +123,14 @@ export async function sendVerifyMail(
 export async function verifyMail(
   token: string
 ): Promise<ControllerResponse<boolean>> {
-  let conn, payload;
+  let conn, payload, id;
 
   try {
     payload = jwt.verify(token, process.env.SECRET!) as jwt.JwtPayload;
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    if (payload?.purpose !== "verify") {
       return { isSuccessful: true, result: false };
     }
 
-    return { isSuccessful: false };
-  }
-
-  if (payload?.purpose !== "verify") {
-    return { isSuccessful: true, result: false };
-  }
-
-  try {
     conn = await pool.getConnection();
     const dbToken = await conn.query(
       "SELECT token FROM Users WHERE userId = ?",
@@ -155,10 +146,16 @@ export async function verifyMail(
     );
     return { isSuccessful: true, result: query.affectedRows === 1 };
   } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      id = (jwt.decode(token) as jwt.JwtPayload).userId;
+      return { isSuccessful: true, result: false };
+    }
+
     console.error("Something went wrong", error);
     return { isSuccessful: false };
   } finally {
     conn?.release();
+    invalidateToken(!payload ? id : payload.userId);
   }
 }
 
@@ -199,6 +196,19 @@ export async function sendPasswordEmail(
   } catch (error) {
     console.error("Something went wrong", error);
     return { isSuccessful: false };
+  } finally {
+    conn?.release();
+  }
+}
+
+async function invalidateToken(userId: number) {
+  let conn;
+
+  try {
+    conn = await pool.getConnection();
+    await conn.query("UPDATE Users SET token = NULL WHERE userId = ?", userId);
+  } catch (error) {
+    console.error("Something went wrong", error);
   } finally {
     conn?.release();
   }
