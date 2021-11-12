@@ -24,8 +24,19 @@ export interface LoginResult {
   token?: string;
 }
 
+/**
+ * Contains user's account credentials
+ * @typedef {object} LoginData
+ * @property {string} username - User's username
+ * @property {string} password - User's password
+ */
 export class LoginData extends User {}
 
+/**
+ * Used to request a password restoration email
+ * @typedef {object} ForgotPasswordData
+ * @property {string} email - User's email
+ */
 export class ForgotPasswordData {
   @IsEmail()
   email!: string;
