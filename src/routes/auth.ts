@@ -66,6 +66,21 @@ router.post("/register", validation(RegistrationData), async (req, res) => {
   res.sendStatus(201);
 });
 
+//#region
+/**
+ * POST /api/auth/forgot
+ * @summary Sends a "Password validation" email to the address provided
+ * @tags Authentication
+ * @param {ForgotPasswordData} request.body.required - Email address to send the message
+ * @return 200 - Email was sent correctly
+ * @return 404 - No account registered with this email was found
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - Email address
+ * {
+ *  "email": "test@example.net"
+ * }
+ */
+//#endregion
 router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
   const mail = await sendPasswordEmail(res.locals.data.email);
 
