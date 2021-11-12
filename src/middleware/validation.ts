@@ -1,6 +1,7 @@
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { RequestHandler } from "express";
+import { ValidationData } from "../entities/auth";
 
 type source = "body" | "params";
 
@@ -17,7 +18,7 @@ export default function validation(type: any, source: source = "body"): RequestH
         missing: errors
           .filter((error) => error.value === undefined)
           .map((error) => error.property),
-      });
+      } as ValidationData);
     }
 
     res.locals.data = data;

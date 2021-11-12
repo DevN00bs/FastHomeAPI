@@ -24,7 +24,7 @@ const router = Router();
  * @tags Authentication
  * @param {RegistrationData} request.body.required - New user information
  * @return 201 - User was successfully created
- * @return {object} 400 - Some data is missing and/or invalid, and we return an object detailing the error
+ * @return {ValidationData} 400 - Some data is missing and/or invalid, and we return an object detailing the error
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example request - New user data
  * {

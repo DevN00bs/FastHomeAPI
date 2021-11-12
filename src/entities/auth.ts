@@ -42,6 +42,17 @@ export class ForgotPasswordData {
   email!: string;
 }
 
+/**
+ * Tells you which fields are missing and/or invalid
+ * @typedef {object} ValidationData
+ * @property {array<string>} invalid - Contains the name of the fields that did not pass validation
+ * @property {array<string>} missing - Contains the name of the fields that are required but are missing from the body
+ */
+export class ValidationData {
+  invalid!: string[];
+  missing!: string[];
+}
+
 export class LinkData {
   @IsJWT()
   token!: string;
