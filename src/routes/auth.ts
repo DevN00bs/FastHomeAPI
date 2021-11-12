@@ -17,6 +17,39 @@ import validation from "../middleware/validation";
 
 const router = Router();
 
+//#region
+/**
+ * POST /api/auth/register
+ * @summary Creates a new user and sends the account validation email
+ * @tags Authentication
+ * @param {RegistrationData} request.body.required - New user information
+ * @return 201 - User was successfully created
+ * @return {object} 400 - Some data is missing and/or invalid, and we return an object detailing the error
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - New user data
+ * {
+ *  "username": "testuser",
+ *  "password": "testpass",
+ *  "email": "test@example.net"
+ * }
+ * @example response - 400 - Missing password
+ * {
+ *  "invalid": [],
+ *  "missing": [
+ *    "password"
+ *  ]
+ * }
+ * @example response - 400 - Invalid email and missing username
+ * {
+ *  "invalid": [
+ *    "email"
+ *  ],
+ *  "missing": [
+ *    "username"
+ *  ]
+ * }
+ */
+//#endregion
 router.post("/register", validation(RegistrationData), async (req, res) => {
   const creation = await createUser(res.locals.data);
 
