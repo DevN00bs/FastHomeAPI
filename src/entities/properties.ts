@@ -1,3 +1,5 @@
+import { IsEmail, IsLatitude, IsLongitude, IsNumber, IsString } from "class-validator";
+
 abstract class Property {
   address!: string;
   terrainHeight!: number;
@@ -60,10 +62,32 @@ export class PropertyData extends Property {
  * @property {number} currencyId - Id of the type of price currency
  */
 export class PropertyRequest extends Property {
+  @IsString()
+  address!: string;
+  @IsString()
   description!: string;
-  currencyId!: number;
+  @IsNumber()
+  price!: number;
+  @IsLatitude()
   latitude!: number;
+  @IsLongitude()
   longitude!: number;
+  @IsNumber()
+  terrainHeight!: number;
+  @IsNumber()
+  terrainWidth!: number;
+  @IsNumber()
+  bedroomAmount!: number;
+  @IsNumber()
+  bathroomAmount!: number;
+  @IsNumber()
+  floorAmount!: number;
+  @IsNumber()
+  garageSize!: number;
+  @IsNumber()
+  contractType!: number;
+  @IsNumber()
+  currencyId!: number;
 }
 
 /**
@@ -101,4 +125,14 @@ export class BasicPropertyData extends Property {
 export class PhotoData {
   url!: string;
   description?: string;
+}
+
+
+export class User {
+  @IsString()
+  username!: string;
+  @IsString()
+  password!: string;
+  @IsEmail()
+  email!: string
 }

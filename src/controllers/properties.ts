@@ -1,4 +1,4 @@
-import { BasicPropertyData, PropertyData } from "../entities/properties";
+import { BasicPropertyData, PropertyData, PropertyRequest } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 
@@ -37,40 +37,38 @@ export async function getPropertyById(id: number): Promise<ControllerResponse<Pr
   }
 };
 
-export async function postProperty(req: any, res: any) {
+export async function postProperty(data: PropertyRequest) {
   let conn;
-  let address = req.body.address;
-  let description = req.body.description;
-  let price = req.body.price;
-  let latitude = req.body.latitude;
-  let longitude = req.body.longitude;
-  let terrainHeight = req.body.terrainHeight;
-  let terrainWidth = req.body.terrainWidth;
-  let bedroomAmount = req.body.bedroomAmount;
-  let bathroomAmount = req.body.bathroomAmount;
-  let floorAmount = req.body.floorAmount;
-  let garageSize = req.body.garageSize;
-  let vendorUserId = req.body.vendorUserId;
-  let buyerUserId = req.body.buyerUserId;
-  let contractType = req.body.contractType;
-  let currencyId = req.body.currencyId;
   
   try {
     conn = await pool.getConnection();
-    const result: PropertyData[] = await conn.query(
-      `INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,buyerUserId,contractType,currencyId) VALUES("${address}","${description}",${price},${latitude},${longitude},${terrainHeight},${terrainWidth},${bedroomAmount}, ${bathroomAmount},${floorAmount},${garageSize},${vendorUserId},${buyerUserId},${contractType},${currencyId})`
+    const result = await conn.query(
+      `INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,buyerUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,[
+        data.address,
+        data.description,
+        data.price,
+        data.latitude,
+        data.longitude,
+        data.terrainHeight,
+        data.terrainWidth,
+        data.bedroomAmount,
+        data.bathroomAmount,
+        data.floorAmount,
+        data.garageSize,
+        data.contractType,
+        data.currencyId
+      ]
       );
-    res.send(result);
-    return { success: true, result} ;
-  } catch (e) {
+    return { isSuccessful: result.affectedRows === 1 };
+    } catch (e) {
     console.error("Something went wrong", e);
-    return { success: false };
+    return { isSuccessful: false };
   } finally {
     conn?.release();
   }
 };
 
-export async function updatePropertie(req: any, res: any, id: any) {
+export async function updateProperty(req: any, res: any, id: any) {
   let conn;
   let address = req.body.address;
   let description = req.body.description;
