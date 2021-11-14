@@ -107,21 +107,19 @@ export async function updateProperty(data: PropertyRequest, id: number) {
   }
 }
 
-export async function delProperty(req: any, id: any, res: any) {
+export async function delProperty(id: number) {
   let conn;
-
-  res.send(`Property with id = ${id} deleted`);
 
   try {
     conn = await pool.getConnection();
-    const result: PropertyData[] = await conn.query(
-      `DELETE FROM Properties WHERE propertyId="${id}"`
+    const result = await conn.query(
+      `DELETE FROM Properties WHERE propertyId= ?`,
+      [id]
     );
-    res.send(result);
-    return { success: true, result };
+    return { isSuccessful: true, result };
   } catch (e) {
     console.error("Something went wrong", e);
-    return { success: false };
+    return { isSuccessful: false };
   } finally {
     conn?.release();
   }

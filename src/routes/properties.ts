@@ -147,7 +147,7 @@ router.post("/property",validation(PropertyRequest), async (_req, res) => {
  * @deprecated
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
- * @return 201 - Everything went ok, the edition was successful
+ * @return 202 - Everything went ok, the edition was successful
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
@@ -160,12 +160,46 @@ router.put("/property/:id",validation(PropertyRequest),async (_req, res) => {
     return res.sendStatus(500);
   }
 
-  res.sendStatus(201)
+  res.sendStatus(202)
 });
 
-router.delete("/property/:id", (req, res) => {
-  let id = req.params.id;
-  delProperty(req, id, res);
+
+// #region Route docs
+/**
+ * DELETE /api/property/{id}
+ * @tags Properties
+ * @summary Return details of one selected property based on the ID
+ * @param {integer} id.path.required Numeric Id of the property
+ * @return {string} 202 - Property successfully deleted 
+ * @return {string} 404 - A property with the id provided does not exists on the database
+ * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example response - 201 - An example of a property
+ * {
+ *   "Not sure of the response"
+ * }
+ */
+// #endregion
+
+router.delete("/property/:id", async (_req, res) => {
+
+  
+  let id = res.locals.data.id
+
+  const del = await delProperty(id);
+
+  if (Number.isNaN(id)) {
+    return res.sendStatus(400);
+  }
+
+  if (!del.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  if (del.result!.length <= 0) {
+    return res.sendStatus(404);
+  }
+
+  res.sendStatus(202);
 });
 
 export default router;
