@@ -147,13 +147,20 @@ router.post("/property",validation(PropertyRequest), async (_req, res) => {
  * @deprecated
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
- * @return 204 - Everything went ok, the edition was successful
+ * @return 201 - Everything went ok, the edition was successful
  * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-router.put("/property/:id", (req, res) => {
-  let id = req.params.id;
-  updateProperty(req, res, id);
+router.put("/property/:id",validation(PropertyRequest),async (_req, res) => {
+  let id = res.locals.data.id;
+
+  const update = await updateProperty(res.locals.data, id);
+ 
+  if(!update.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  res.sendStatus(201)
 });
 
 router.delete("/property/:id", (req, res) => {
