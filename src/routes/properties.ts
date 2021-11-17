@@ -174,7 +174,7 @@ router.post(
       main: Express.Multer.File[];
       photos: Express.Multer.File[];
     };
-    const save = await savePhotos(parsed);
+    const save = await savePhotos(parsed, parseInt(req.params.id));
 
     if (!save.isSuccessful) {
       return res.sendStatus(500);

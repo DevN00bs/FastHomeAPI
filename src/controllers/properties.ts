@@ -124,7 +124,7 @@ export async function delProperty(req: any, id: any, res: any) {
 export async function savePhotos(files: {
   main: Express.Multer.File[];
   photos?: Express.Multer.File[];
-}): Promise<ControllerResponse<boolean>> {
+}, id: number): Promise<ControllerResponse<boolean>> {
   let conn: PoolConnection | undefined;
 
   if (!files.main) {
@@ -135,13 +135,13 @@ export async function savePhotos(files: {
     conn = await pool.getConnection();
 
     await conn.query(
-      "INSERT INTO Photos (photoURL, isMainPhoto, propertyId) VALUES (?, 1, 9)",
-      files.main[0].filename
+      "INSERT INTO Photos (photoURL, isMainPhoto, propertyId) VALUES (?, 1, ?)",
+      [files.main[0].filename, id]
     );
     files.photos?.forEach(async (file) => {
       await conn!.query(
-        "INSERT INTO Photos (photoURL, propertyId) VALUES (?, 1)",
-        file.filename
+        "INSERT INTO Photos (photoURL, propertyId) VALUES (?, ?)",
+        [file.filename, id]
       );
     });
     return { isSuccessful: true, result: true };
