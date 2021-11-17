@@ -154,8 +154,17 @@ router.delete("/property/:id", (req, res) => {
   delProperty(req, id, res);
 });
 
+//#region
+/**
+ * POST /api/property/{id}/images
+ * @summary Route to upload a property's photos
+ * @tags Properties
+ * @param {integer} id.path.required - The ID of the property to upload the photos to
+ * @param {PropertyPhotos} request.body.required - The photos to upload - multipart/form-data
+ */
+//#endregion
 router.post(
-  "/property/images",
+  "/property/:id/images",
   upload.fields([
     { name: "main", maxCount: 1 },
     { name: "photos", maxCount: 5 },
