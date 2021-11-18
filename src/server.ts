@@ -35,6 +35,12 @@ expressJSDocSwagger(app)({
       description: "Used for testing",
     },
   ],
+  security: {
+    TokenAuth: {
+      type: "http",
+      scheme: "bearer",
+    },
+  },
 });
 
 app.use(cors());
