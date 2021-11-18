@@ -8,6 +8,7 @@ import {
   delProperty,
   savePhotos,
 } from "../controllers/properties";
+import { IDRequest } from "../entities/controller";
 import { PropertyRequest } from "../entities/properties";
 import validation from "../middleware/validation";
 
@@ -99,14 +100,8 @@ router.get("/properties", async (req, res) => {
  * }
  */
 // #endregion
-router.get("/property/:id", async (_req, res) => {
-  const id = res.locals.data.id;
-
-  if (Number.isNaN(id)) {
-    return res.sendStatus(400);
-  }
-
-  const response = await getPropertyById(id);
+router.get("/property/:id", validation(IDRequest, "params"), async (_req, res) => {
+  const response = await getPropertyById(res.locals.data.id);
 
   if (!response.isSuccessful) {
     return res.sendStatus(500);
@@ -161,9 +156,12 @@ router.post("/property",validation(PropertyRequest), async (_req, res) => {
  * }
  */
 // #endregion
-router.put("/property/:id",validation(PropertyRequest),async (_req, res) => {
-  const id = res.locals.data.id;
-  const update = await updateProperty(res.locals.data, id);
+router.put("/property/:id", validation(PropertyRequest),async (req, res) => {
+  if (Number.isNaN(req.params.id)) {
+    return res.status(400).json({invalid: ["id"]})
+  }
+
+  const update = await updateProperty(res.locals.data, parseInt(req.params.id));
  
   if(!update.isSuccessful) {
     return res.sendStatus(500);
@@ -185,14 +183,8 @@ router.put("/property/:id",validation(PropertyRequest),async (_req, res) => {
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-
-router.delete("/property/:id", async (_req, res) => {
-  const id = res.locals.data.id
-  const del = await delProperty(id);
-
-  if (Number.isNaN(id)) {
-    return res.sendStatus(400);
-  }
+router.delete("/property/:id", validation(IDRequest, "params"), async (_req, res) => {
+  const del = await delProperty(res.locals.data.id);
 
   if (!del.isSuccessful) {
     return res.sendStatus(500);
