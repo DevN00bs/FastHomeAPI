@@ -5,6 +5,7 @@ import {
 } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
+import { PoolConnection } from "mariadb";
 
 export async function getPropertiesList(): Promise<
   ControllerResponse<BasicPropertyData[]>
@@ -119,6 +120,38 @@ export async function delProperty(id: number) {
     return { isSuccessful: true, result };
   } catch (e) {
     console.error("Something went wrong", e);
+    return { isSuccessful: false };
+  } finally {
+    conn?.release();
+  }
+};
+
+export async function savePhotos(files: {
+  main: Express.Multer.File[];
+  photos?: Express.Multer.File[];
+}, id: number): Promise<ControllerResponse<boolean>> {
+  let conn: PoolConnection | undefined;
+
+  if (!files.main) {
+    return { isSuccessful: true, result: false };
+  }
+
+  try {
+    conn = await pool.getConnection();
+
+    await conn.query(
+      "INSERT INTO Photos (photoURL, isMainPhoto, propertyId) VALUES (?, 1, ?)",
+      [files.main[0].filename, id]
+    );
+    files.photos?.forEach(async (file) => {
+      await conn!.query(
+        "INSERT INTO Photos (photoURL, propertyId) VALUES (?, ?)",
+        [file.filename, id]
+      );
+    });
+    return { isSuccessful: true, result: true };
+  } catch (error) {
+    console.error("Something went wrong", error);
     return { isSuccessful: false };
   } finally {
     conn?.release();

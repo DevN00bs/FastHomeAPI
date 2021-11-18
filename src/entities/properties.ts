@@ -127,12 +127,10 @@ export class PhotoData {
   description?: string;
 }
 
-
-export class User {
-  @IsString()
-  username!: string;
-  @IsString()
-  password!: string;
-  @IsEmail()
-  email!: string
-}
+/**
+ * Photos of the property recently created
+ * @typedef {object} PropertyPhotos
+ * @property {string} main.required - The photo that will appear on the properties' list - binary
+ * @property {string} photos - The rest of the photos of the property - binary
+ */
+export class PropertyPhotos {}
