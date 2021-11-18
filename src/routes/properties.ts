@@ -100,19 +100,23 @@ router.get("/properties", async (req, res) => {
  * }
  */
 // #endregion
-router.get("/property/:id", validation(IDRequest, "params"), async (_req, res) => {
-  const response = await getPropertyById(res.locals.data.id);
+router.get(
+  "/property/:id",
+  validation(IDRequest, "params"),
+  async (_req, res) => {
+    const response = await getPropertyById(res.locals.data.id);
 
-  if (!response.isSuccessful) {
-    return res.sendStatus(500);
+    if (!response.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (response.result!.length <= 0) {
+      return res.sendStatus(404);
+    }
+
+    res.json(response.result![0]);
   }
-
-  if (response.result!.length <= 0) {
-    return res.sendStatus(404);
-  }
-
-  res.json(response.result![0]);
-});
+);
 
 // #region Route docs
 /**
@@ -126,14 +130,14 @@ router.get("/property/:id", validation(IDRequest, "params"), async (_req, res) =
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-router.post("/property",validation(PropertyRequest), async (_req, res) => {
+router.post("/property", validation(PropertyRequest), async (_req, res) => {
   const newProp = await postProperty(res.locals.data);
 
-  if(!newProp.isSuccessful) {
+  if (!newProp.isSuccessful) {
     return res.sendStatus(500);
   }
 
-  res.sendStatus(201)
+  res.sendStatus(201);
 });
 
 // #region Route docs
@@ -156,20 +160,19 @@ router.post("/property",validation(PropertyRequest), async (_req, res) => {
  * }
  */
 // #endregion
-router.put("/property/:id", validation(PropertyRequest),async (req, res) => {
+router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
   if (Number.isNaN(req.params.id)) {
-    return res.status(400).json({invalid: ["id"]})
+    return res.status(400).json({ invalid: ["id"] });
   }
 
   const update = await updateProperty(res.locals.data, parseInt(req.params.id));
- 
-  if(!update.isSuccessful) {
+
+  if (!update.isSuccessful) {
     return res.sendStatus(500);
   }
 
-  res.sendStatus(201)
+  res.sendStatus(201);
 });
-
 
 // #region Route docs
 /**
@@ -183,19 +186,23 @@ router.put("/property/:id", validation(PropertyRequest),async (req, res) => {
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-router.delete("/property/:id", validation(IDRequest, "params"), async (_req, res) => {
-  const del = await delProperty(res.locals.data.id);
+router.delete(
+  "/property/:id",
+  validation(IDRequest, "params"),
+  async (_req, res) => {
+    const del = await delProperty(res.locals.data.id);
 
-  if (!del.isSuccessful) {
-    return res.sendStatus(500);
+    if (!del.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (del.result!.length <= 0) {
+      return res.sendStatus(404);
+    }
+
+    res.sendStatus(204);
   }
-
-  if (del.result!.length <= 0) {
-    return res.sendStatus(404);
-  }
-
-  res.sendStatus(204);
-});
+);
 
 //#region
 /**

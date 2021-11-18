@@ -12,5 +12,5 @@ export interface ControllerResponse<T> {
 
 export class IDRequest {
   @IsInt()
-  id!: number
+  id!: number;
 }

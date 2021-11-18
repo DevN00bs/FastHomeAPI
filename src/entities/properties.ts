@@ -1,4 +1,10 @@
-import { IsEmail, IsLatitude, IsLongitude, IsNumber, IsString } from "class-validator";
+import {
+  IsEmail,
+  IsLatitude,
+  IsLongitude,
+  IsNumber,
+  IsString,
+} from "class-validator";
 
 abstract class Property {
   address!: string;

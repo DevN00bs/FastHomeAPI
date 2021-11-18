@@ -96,7 +96,7 @@ export async function updateProperty(data: PropertyRequest, id: number) {
         data.bathroomAmount,
         data.floorAmount,
         data.garageSize,
-        id
+        id,
       ]
     );
     return { isSuccessful: true, result };
@@ -124,12 +124,15 @@ export async function delProperty(id: number) {
   } finally {
     conn?.release();
   }
-};
+}
 
-export async function savePhotos(files: {
-  main: Express.Multer.File[];
-  photos?: Express.Multer.File[];
-}, id: number): Promise<ControllerResponse<boolean>> {
+export async function savePhotos(
+  files: {
+    main: Express.Multer.File[];
+    photos?: Express.Multer.File[];
+  },
+  id: number
+): Promise<ControllerResponse<boolean>> {
   let conn: PoolConnection | undefined;
 
   if (!files.main) {
