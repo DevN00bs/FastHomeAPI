@@ -1,10 +1,12 @@
 import { Router } from "express";
+import upload from "../conf/images";
 import {
   getPropertiesList,
   getPropertyById,
   postProperty,
   updatePropertie,
   delProperty,
+  savePhotos,
 } from "../controllers/properties";
 
 const router = Router();
@@ -151,5 +153,35 @@ router.delete("/property/:id", (req, res) => {
   let id = req.params.id;
   delProperty(req, id, res);
 });
+
+//#region
+/**
+ * POST /api/property/{id}/images
+ * @summary Route to upload a property's photos
+ * @tags Properties
+ * @param {integer} id.path.required - The ID of the property to upload the photos to
+ * @param {PropertyPhotos} request.body.required - The photos to upload - multipart/form-data
+ */
+//#endregion
+router.post(
+  "/property/:id/images",
+  upload.fields([
+    { name: "main", maxCount: 1 },
+    { name: "photos", maxCount: 5 },
+  ]),
+  async (req, res) => {
+    const parsed = req.files as {
+      main: Express.Multer.File[];
+      photos: Express.Multer.File[];
+    };
+    const save = await savePhotos(parsed, parseInt(req.params.id));
+
+    if (!save.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(201);
+  }
+);
 
 export default router;
