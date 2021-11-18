@@ -144,7 +144,7 @@ router.post("/login", validation(LoginData), async (_req, res) => {
  * GET /api/auth/verify/{token}
  * @summary Verifies the email address of an account
  * @tags Authentication
- * @param {string} request.path.required - Verification token
+ * @param {string} token.path.required - Verification token
  * @return 200 - Email was verified successfully
  * @return 401 - Link has expired and/or is invalid
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
