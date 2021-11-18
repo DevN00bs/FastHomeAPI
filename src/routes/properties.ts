@@ -185,6 +185,7 @@ router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
  * DELETE /api/property/{id}
  * @tags Properties
  * @summary Return details of one selected property based on the ID
+ * @deprecated
  * @param {integer} id.path.required Numeric Id of the property
  * @return 204 - Property successfully deleted
  * @return 400 - ID must be an integer. Please, try again
