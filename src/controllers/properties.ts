@@ -45,13 +45,15 @@ export async function getPropertyById(
   }
 }
 
-export async function postProperty(data: PropertyRequest) {
+export async function postProperty(
+  data: PropertyRequest
+): Promise<ControllerResponse<number>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      `INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,buyerUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      "INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,1,?,?)",
       [
         data.address,
         data.description,
@@ -68,7 +70,7 @@ export async function postProperty(data: PropertyRequest) {
         data.currencyId,
       ]
     );
-    return { isSuccessful: result.affectedRows === 1 };
+    return { isSuccessful: result.affectedRows === 1, result: result.insertId };
   } catch (e) {
     console.error("Something went wrong", e);
     return { isSuccessful: false };

@@ -125,7 +125,7 @@ router.get(
  * @summary Create a new property with all the details
  * @deprecated
  * @param {PropertyRequest} request.body.required
- * @return 201 - Everything went ok, the property was added
+ * @return 201 - Everything went ok, the property was added and we return the property's ID
  * @return {ValidationData} 400 - Some data is missing and/or invalid, and we return an object detailing the error
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
@@ -137,7 +137,7 @@ router.post("/property", validation(PropertyRequest), async (_req, res) => {
     return res.sendStatus(500);
   }
 
-  res.sendStatus(201);
+  res.status(201).json({ id: newProp.result });
 });
 
 // #region Route docs
