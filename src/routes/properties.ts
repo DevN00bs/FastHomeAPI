@@ -10,6 +10,7 @@ import {
 } from "../controllers/properties";
 import { IDRequest } from "../entities/controller";
 import { PropertyRequest } from "../entities/properties";
+import auth from "../middleware/auth";
 import validation from "../middleware/validation";
 
 const router = Router();
@@ -123,22 +124,27 @@ router.get(
  * POST /api/property
  * @tags Properties
  * @summary Create a new property with all the details
- * @deprecated
+ * @security TokenAuth
  * @param {PropertyRequest} request.body.required
  * @return 201 - Everything went ok, the property was added and we return the property's ID
  * @return {ValidationData} 400 - Some data is missing and/or invalid, and we return an object detailing the error
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
-router.post("/property", validation(PropertyRequest), async (_req, res) => {
-  const newProp = await postProperty(res.locals.data);
+router.post(
+  "/property",
+  auth,
+  validation(PropertyRequest),
+  async (_req, res) => {
+    const newProp = await postProperty(res.locals.data, res.locals.auth.userId);
 
-  if (!newProp.isSuccessful) {
-    return res.sendStatus(500);
+    if (!newProp.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.status(201).json({ id: newProp.result });
   }
-
-  res.status(201).json({ id: newProp.result });
-});
+);
 
 // #region Route docs
 /**

@@ -46,14 +46,15 @@ export async function getPropertyById(
 }
 
 export async function postProperty(
-  data: PropertyRequest
+  data: PropertyRequest,
+  id: number
 ): Promise<ControllerResponse<number>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      "INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,1,?,?)",
+      "INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       [
         data.address,
         data.description,
@@ -66,6 +67,7 @@ export async function postProperty(
         data.bathroomAmount,
         data.floorAmount,
         data.garageSize,
+        id,
         data.contractType,
         data.currencyId,
       ]
