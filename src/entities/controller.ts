@@ -10,6 +10,11 @@ export interface ControllerResponse<T> {
   result?: T;
 }
 
+/**
+ * Contains the ID of a property
+ * @typedef {object} IDRequest
+ * @property {integer} id - ID of the property
+ */
 export class IDRequest {
   @IsInt()
   id!: number;

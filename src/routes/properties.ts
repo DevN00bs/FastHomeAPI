@@ -126,14 +126,51 @@ router.get(
  * @summary Create a new property with all the details
  * @security TokenAuth
  * @param {PropertyRequest} request.body.required
- * @return 201 - Everything went ok, the property was added and we return the property's ID
+ * @return {IDRequest} 201 - Everything went ok, the property was added and we return the property's ID
  * @return {ValidationData} 400 - Some data is missing and/or invalid, and we return an object detailing the error
+ * @return 403 - The token is missing or it is invalid
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - An example property
+ * {
+ *   "address": "158 Main Street",
+ *   "description": "lol",
+ *   "price": 8500,
+ *   "latitude": 28.661655,
+ *   "longitude": -106.040184,
+ *   "terrainHeight": 7.5,
+ *   "terrainWidth": 9.25,
+ *   "bedroomAmount": 1,
+ *   "bathroomAmount": 1,
+ *   "floorAmount": 1,
+ *   "garageSize": 1,
+ *   "contractType": 1,
+ *   "currencyId": 1
+ * }
+ * @example response - 201 - ID of the created property
+ * {
+ *  "id": 5
+ * }
+ * @example response - 400 - Missing address
+ * {
+ *  "invalid": [],
+ *  "missing": [
+ *    "address"
+ *  ]
+ * }
+ * @example response - 400 - Invalid longitude and missing terrain height
+ * {
+ *  "invalid": [
+ *    "longitude"
+ *  ],
+ *  "missing": [
+ *    "terrainHeight"
+ *  ]
+ * }
  */
 // #endregion
 router.post(
   "/property",
-  auth,
+  auth(),
   validation(PropertyRequest),
   async (_req, res) => {
     const newProp = await postProperty(res.locals.data, res.locals.auth.userId);
