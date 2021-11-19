@@ -9,15 +9,17 @@ import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
 
-export async function getPropertiesList(order: SortOrder): Promise<
-  ControllerResponse<BasicPropertyData[]>
-> {
+export async function getPropertiesList(
+  order: SortOrder
+): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
   try {
     conn = await pool.getConnection();
+
     const result: BasicPropertyData[] = await conn.query(
-      "SELECT * FROM BasicPropertyData ORDER BY ?",
-      [sortOrder[order]]
+      `SELECT * FROM BasicPropertyData ORDER BY ${conn.escapeId(
+        sortOrder[order]
+      )}`
     );
     return { isSuccessful: true, result };
   } catch (e) {

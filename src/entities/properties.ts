@@ -141,7 +141,7 @@ export class PhotoData {
  */
 export class PropertyPhotos {}
 
-const SORT_ORDER = ["", "price", "terrain"] as const
+const SORT_ORDER = ["", "price"] as const
 type Order = typeof SORT_ORDER
 export type SortOrder = Order[number]
 
@@ -151,6 +151,5 @@ export function isOrder(value: string): value is SortOrder {
 
 export const sortOrder = {
   price: "price",
-  terrain: "terrainHeight * terrainWidth",
-  "": ""
+  "": "propertyId"
 };

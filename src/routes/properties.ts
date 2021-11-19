@@ -20,6 +20,7 @@ const router = Router();
  * GET /api/properties
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
+ * @param {string} sort.query - Specify an order to the list. By sending nothing, we sort by creation date - enum:price
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
@@ -65,6 +66,8 @@ router.get("/properties", async (req, res) => {
   if (!isOrder(sort)) {
     return res.sendStatus(400);
   }
+
+  console.log(sort)
 
   const response = await getPropertiesList(sort as SortOrder);
 
