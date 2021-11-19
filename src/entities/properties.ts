@@ -153,3 +153,12 @@ export const sortOrder = {
   price: "price",
   "": "propertyId"
 };
+
+export const BEDROOM_FILTERS = [
+  "`bedroomAmount` > 0",
+  "`bedroomAmount` = 1",
+  "`bedroomAmount` = 2",
+  "`bedroomAmount` = 3",
+  "`bedroomAmount` = 4",
+  "`bedroomAmount` >= 5",
+]

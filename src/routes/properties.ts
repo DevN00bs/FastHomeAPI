@@ -21,6 +21,7 @@ const router = Router();
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
  * @param {string} sort.query - Specify an order to the list. By sending nothing, we sort by creation date - enum:price
+ * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:1,2,3,4,5
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
@@ -61,7 +62,12 @@ const router = Router();
  */
 // #endregion
 router.get("/properties", async (req, res) => {
+  if (Number.isNaN(req.query.bedrooms)) {
+    return res.sendStatus(400)
+  }
+
   const sort = req.query.sort === undefined ? "" : req.query.sort as string
+  const filter = req.query.bedrooms === undefined ? 0 : parseInt(req.query.bedrooms as string)
 
   if (!isOrder(sort)) {
     return res.sendStatus(400);
@@ -69,7 +75,7 @@ router.get("/properties", async (req, res) => {
 
   console.log(sort)
 
-  const response = await getPropertiesList(sort as SortOrder);
+  const response = await getPropertiesList(sort as SortOrder, filter);
 
   if (!response.isSuccessful) {
     return res.sendStatus(500);

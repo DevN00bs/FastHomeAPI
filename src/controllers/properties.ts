@@ -1,5 +1,6 @@
 import {
   BasicPropertyData,
+  BEDROOM_FILTERS,
   PropertyData,
   PropertyRequest,
   SortOrder,
@@ -10,14 +11,15 @@ import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
 
 export async function getPropertiesList(
-  order: SortOrder
+  order: SortOrder,
+  filter: number
 ): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
   try {
     conn = await pool.getConnection();
 
     const result: BasicPropertyData[] = await conn.query(
-      `SELECT * FROM BasicPropertyData ORDER BY ${conn.escapeId(
+      `SELECT * FROM BasicPropertyData WHERE ${BEDROOM_FILTERS[filter]} ORDER BY ${conn.escapeId(
         sortOrder[order]
       )}`
     );
