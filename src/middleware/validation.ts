@@ -5,7 +5,10 @@ import { ValidationData } from "../entities/auth";
 
 type source = "body" | "params";
 
-export default function validation(type: any, source: source = "body"): RequestHandler {
+export default function validation(
+  type: any,
+  source: source = "body"
+): RequestHandler {
   return async (req, res, next) => {
     const data = plainToClass(type, req[source]);
     const errors = await validate(data);

@@ -70,7 +70,7 @@ export async function loginUser(
       isSuccessful: true,
       result: {
         passwordsMatch: true,
-        token: jwt.sign(userData[0].userId, process.env.SECRET!),
+        token: "Bearer " + jwt.sign({ userId: userData[0].userId }, process.env.SECRET!),
       },
     };
   } catch (error) {
