@@ -69,7 +69,7 @@ router.get("/properties", async (req, res) => {
   const sort = req.query.sort === undefined ? "" : req.query.sort as string
   const filter = req.query.bedrooms === undefined ? 0 : parseInt(req.query.bedrooms as string)
 
-  if (!isOrder(sort)) {
+  if (!isOrder(sort) || filter < 0 || filter > 5) {
     return res.sendStatus(400);
   }
 
