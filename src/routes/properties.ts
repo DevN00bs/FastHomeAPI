@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { query, Router } from "express";
 import upload from "../conf/images";
 import {
   getPropertiesList,
@@ -9,7 +9,7 @@ import {
   savePhotos,
 } from "../controllers/properties";
 import { IDRequest } from "../entities/controller";
-import { PropertyRequest } from "../entities/properties";
+import { PropertyRequest, isOrder, SortOrder, sortOrder } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
 
@@ -60,7 +60,13 @@ const router = Router();
  */
 // #endregion
 router.get("/properties", async (req, res) => {
-  const response = await getPropertiesList();
+  const sort = req.query.sort === undefined ? "" : req.query.sort as string
+
+  if (!isOrder(sort)) {
+    return res.sendStatus(400);
+  }
+
+  const response = await getPropertiesList(sort as SortOrder);
 
   if (!response.isSuccessful) {
     return res.sendStatus(500);
