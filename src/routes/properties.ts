@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { query, Router } from "express";
 import upload from "../conf/images";
 import {
   getPropertiesList,
@@ -9,7 +9,7 @@ import {
   savePhotos,
 } from "../controllers/properties";
 import { IDRequest } from "../entities/controller";
-import { PropertyRequest } from "../entities/properties";
+import { PropertyRequest, isOrder, SortOrder, sortOrder } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
 
@@ -20,6 +20,8 @@ const router = Router();
  * GET /api/properties
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
+ * @param {string} sort.query - Specify an order to the list. By sending nothing, we sort by creation date - enum:price
+ * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:1,2,3,4,5
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
@@ -60,7 +62,20 @@ const router = Router();
  */
 // #endregion
 router.get("/properties", async (req, res) => {
-  const response = await getPropertiesList();
+  if (Number.isNaN(req.query.bedrooms)) {
+    return res.sendStatus(400)
+  }
+
+  const sort = req.query.sort === undefined ? "" : req.query.sort as string
+  const filter = req.query.bedrooms === undefined ? 0 : parseInt(req.query.bedrooms as string)
+
+  if (!isOrder(sort) || filter < 0 || filter > 5) {
+    return res.sendStatus(400);
+  }
+
+  console.log(sort)
+
+  const response = await getPropertiesList(sort as SortOrder, filter);
 
   if (!response.isSuccessful) {
     return res.sendStatus(500);

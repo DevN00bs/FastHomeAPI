@@ -140,3 +140,25 @@ export class PhotoData {
  * @property {string} photos - The rest of the photos of the property - binary
  */
 export class PropertyPhotos {}
+
+const SORT_ORDER = ["", "price"] as const
+type Order = typeof SORT_ORDER
+export type SortOrder = Order[number]
+
+export function isOrder(value: string): value is SortOrder {
+  return SORT_ORDER.includes(value as SortOrder)
+}
+
+export const sortOrder = {
+  price: "price",
+  "": "propertyId"
+};
+
+export const BEDROOM_FILTERS = [
+  "`bedroomAmount` > 0",
+  "`bedroomAmount` = 1",
+  "`bedroomAmount` = 2",
+  "`bedroomAmount` = 3",
+  "`bedroomAmount` = 4",
+  "`bedroomAmount` >= 5",
+]
