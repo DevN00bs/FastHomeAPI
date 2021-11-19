@@ -10,6 +10,10 @@
     "views": "cp -R ./src/views ./dist",
     "key": "echo $GCS_KEY > ./key.json"
   },
+  "engines": {
+    "node": "^16.13.0",
+    "npm": "^8.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DevN00bs/FastHomeAPI.git"
