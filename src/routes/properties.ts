@@ -4,10 +4,14 @@ import {
   getPropertiesList,
   getPropertyById,
   postProperty,
-  updatePropertie,
+  updateProperty,
   delProperty,
   savePhotos,
 } from "../controllers/properties";
+import { IDRequest } from "../entities/controller";
+import { PropertyRequest } from "../entities/properties";
+import auth from "../middleware/auth";
+import validation from "../middleware/validation";
 
 const router = Router();
 
@@ -17,7 +21,7 @@ const router = Router();
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
- * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
  * [
  * {
@@ -72,9 +76,9 @@ router.get("/properties", async (req, res) => {
  * @summary Return details of one selected property based on the ID
  * @param {integer} id.path.required Numeric Id of the property
  * @return {PropertyData} 200 - Everything went ok, and it returns property details. See example below
- * @return {string} 400 - You sent something that wasn't a number. Please check your request
- * @return {string} 404 - A property with the id provided does not exists on the database
- * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @return 400 - You sent something that wasn't a number. Please check your request
+ * @return 404 - A property with the id provided does not exists on the database
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
  *   "propertyId": 1,
@@ -97,40 +101,87 @@ router.get("/properties", async (req, res) => {
  * }
  */
 // #endregion
-router.get("/property/:id", async (req, res) => {
-  let id = parseInt(req.params.id);
+router.get(
+  "/property/:id",
+  validation(IDRequest, "params"),
+  async (_req, res) => {
+    const response = await getPropertyById(res.locals.data.id);
 
-  if (Number.isNaN(id)) {
-    return res.sendStatus(400);
+    if (!response.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (response.result!.length <= 0) {
+      return res.sendStatus(404);
+    }
+
+    res.json(response.result![0]);
   }
-
-  const response = await getPropertyById(id);
-
-  if (!response.isSuccessful) {
-    return res.sendStatus(500);
-  }
-
-  if (response.result!.length <= 0) {
-    return res.sendStatus(404);
-  }
-
-  res.json(response.result![0]);
-});
+);
 
 // #region Route docs
 /**
  * POST /api/property
  * @tags Properties
  * @summary Create a new property with all the details
- * @deprecated
+ * @security TokenAuth
  * @param {PropertyRequest} request.body.required
- * @return {string} 201 - Everything went ok, the property was added
- * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @return {IDRequest} 201 - Everything went ok, the property was added and we return the property's ID
+ * @return {ValidationData} 400 - Some data is missing and/or invalid, and we return an object detailing the error
+ * @return 403 - The token is missing or it is invalid
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - An example property
+ * {
+ *   "address": "158 Main Street",
+ *   "description": "lol",
+ *   "price": 8500,
+ *   "latitude": 28.661655,
+ *   "longitude": -106.040184,
+ *   "terrainHeight": 7.5,
+ *   "terrainWidth": 9.25,
+ *   "bedroomAmount": 1,
+ *   "bathroomAmount": 1,
+ *   "floorAmount": 1,
+ *   "garageSize": 1,
+ *   "contractType": 1,
+ *   "currencyId": 1
+ * }
+ * @example response - 201 - ID of the created property
+ * {
+ *  "id": 5
+ * }
+ * @example response - 400 - Missing address
+ * {
+ *  "invalid": [],
+ *  "missing": [
+ *    "address"
+ *  ]
+ * }
+ * @example response - 400 - Invalid longitude and missing terrain height
+ * {
+ *  "invalid": [
+ *    "longitude"
+ *  ],
+ *  "missing": [
+ *    "terrainHeight"
+ *  ]
+ * }
  */
 // #endregion
-router.post("/property", (req, res) => {
-  postProperty(req, res);
-});
+router.post(
+  "/property",
+  auth(),
+  validation(PropertyRequest),
+  async (_req, res) => {
+    const newProp = await postProperty(res.locals.data, res.locals.auth.userId);
+
+    if (!newProp.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.status(201).json({ id: newProp.result });
+  }
+);
 
 // #region Route docs
 /**
@@ -140,27 +191,73 @@ router.post("/property", (req, res) => {
  * @deprecated
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
- * @return 204 - Everything went ok, the edition was successful
- * @return {string} 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @return 201 - Everything went ok, the edition was successful
+ * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example response - 400 - Invalid latitude
+ * {
+ *  "missing": [],
+ *  "invalid": [
+ *    "latitude"
+ *  ]
+ * }
  */
 // #endregion
-router.put("/property/:id", (req, res) => {
-  let id = req.params.id;
-  updatePropertie(req, res, id);
+router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
+  if (Number.isNaN(req.params.id)) {
+    return res.status(400).json({ invalid: ["id"] });
+  }
+
+  const update = await updateProperty(res.locals.data, parseInt(req.params.id));
+
+  if (!update.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  res.sendStatus(201);
 });
 
-router.delete("/property/:id", (req, res) => {
-  let id = req.params.id;
-  delProperty(req, id, res);
-});
+// #region Route docs
+/**
+ * DELETE /api/property/{id}
+ * @tags Properties
+ * @summary Return details of one selected property based on the ID
+ * @deprecated
+ * @param {integer} id.path.required Numeric Id of the property
+ * @return 204 - Property successfully deleted
+ * @return 400 - ID must be an integer. Please, try again
+ * @return 404 - A property with the id provided does not exists on the database
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ */
+// #endregion
+router.delete(
+  "/property/:id",
+  validation(IDRequest, "params"),
+  async (_req, res) => {
+    const del = await delProperty(res.locals.data.id);
+
+    if (!del.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (del.result!.length <= 0) {
+      return res.sendStatus(404);
+    }
+
+    res.sendStatus(204);
+  }
+);
 
 //#region
 /**
  * POST /api/property/{id}/images
  * @summary Route to upload a property's photos
  * @tags Properties
+ * @deprecated
  * @param {integer} id.path.required - The ID of the property to upload the photos to
  * @param {PropertyPhotos} request.body.required - The photos to upload - multipart/form-data
+ * @return 201 - Everything went ok, the upload was successful
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 //#endregion
 router.post(
