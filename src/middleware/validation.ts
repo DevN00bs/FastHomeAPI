@@ -2,6 +2,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { RequestHandler } from "express";
 import { ValidationData } from "../entities/auth";
+import { PartialPropertyRequest } from "../entities/properties";
 
 type source = "body" | "params";
 
@@ -10,7 +11,10 @@ export default function validation(
   source: source = "body"
 ): RequestHandler {
   return async (req, res, next) => {
-    const data = plainToClass(type, req[source]);
+    const data = plainToClass(type, req[source], {
+      excludeExtraneousValues: true,
+      exposeUnsetFields: type !== PartialPropertyRequest
+    });
     const errors = await validate(data);
 
     if (errors.length > 0) {

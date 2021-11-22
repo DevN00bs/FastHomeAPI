@@ -1,4 +1,5 @@
-import { IsInt } from "class-validator";
+import { Expose } from "class-transformer";
+import { IsNumberString } from "class-validator";
 
 export interface LoginResult {
   passwordsMatch: boolean;
@@ -16,6 +17,7 @@ export interface ControllerResponse<T> {
  * @property {integer} id - ID of the property
  */
 export class IDRequest {
-  @IsInt()
+  @Expose()
+  @IsNumberString({ no_symbols: true })
   id!: number;
 }
