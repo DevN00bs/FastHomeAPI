@@ -1,9 +1,14 @@
-import { IsEmail, IsJWT, IsString } from "class-validator";
+import { Expose } from "class-transformer";
+import { IsEmail, IsJWT, IsString, MaxLength } from "class-validator";
 
 abstract class User {
+  @Expose()
   @IsString()
+  @MaxLength(30)
   username!: string;
+  @Expose()
   @IsString()
+  @MaxLength(50)
   password!: string;
 }
 
@@ -15,6 +20,8 @@ abstract class User {
  * @property {string} password - User's password. Will be encrypted server-side
  */
 export class RegistrationData extends User {
+  @Expose()
+  @IsString()
   @IsEmail()
   email!: string;
 }
@@ -38,6 +45,8 @@ export class LoginData extends User {}
  * @property {string} email - User's email
  */
 export class ForgotPasswordData {
+  @Expose()
+  @IsString()
   @IsEmail()
   email!: string;
 }
@@ -54,6 +63,8 @@ export class ValidationData {
 }
 
 export class LinkData {
+  @Expose()
+  @IsString()
   @IsJWT()
   token!: string;
 }

@@ -9,7 +9,12 @@ import {
   savePhotos,
 } from "../controllers/properties";
 import { IDRequest } from "../entities/controller";
-import { PropertyRequest, isOrder, SortOrder, sortOrder } from "../entities/properties";
+import {
+  PropertyRequest,
+  isOrder,
+  SortOrder,
+  PartialPropertyRequest,
+} from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
 
@@ -63,17 +68,20 @@ const router = Router();
 // #endregion
 router.get("/properties", async (req, res) => {
   if (Number.isNaN(req.query.bedrooms)) {
-    return res.sendStatus(400)
+    return res.sendStatus(400);
   }
 
-  const sort = req.query.sort === undefined ? "" : req.query.sort as string
-  const filter = req.query.bedrooms === undefined ? 0 : parseInt(req.query.bedrooms as string)
+  const sort = req.query.sort === undefined ? "" : (req.query.sort as string);
+  const filter =
+    req.query.bedrooms === undefined
+      ? 0
+      : parseInt(req.query.bedrooms as string);
 
   if (!isOrder(sort) || filter < 0 || filter > 5) {
     return res.sendStatus(400);
   }
 
-  console.log(sort)
+  console.log(sort);
 
   const response = await getPropertiesList(sort as SortOrder, filter);
 
@@ -203,7 +211,7 @@ router.post(
  * PUT /api/property/{id}
  * @tags Properties
  * @summary Edit the details of a property with the given ID
- * @deprecated
+ * @security TokenAuth
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
  * @return 201 - Everything went ok, the edition was successful
@@ -218,26 +226,43 @@ router.post(
  * }
  */
 // #endregion
-router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
-  if (Number.isNaN(req.params.id)) {
-    return res.status(400).json({ invalid: ["id"] });
+router.put(
+  "/property/:id",
+  auth(),
+  validation(PartialPropertyRequest),
+  async (req, res) => {
+    if (Number.isNaN(req.params.id)) {
+      return res.status(400).json({ invalid: ["id"] });
+    }
+
+    const update = await updateProperty(
+      res.locals.data,
+      parseInt(req.params.id),
+      res.locals.auth.userId
+    );
+
+    if (!update.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    if (!update.result?.canModify) {
+      return res.sendStatus(403);
+    }
+
+    if (!update.result.modified) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(204);
   }
-
-  const update = await updateProperty(res.locals.data, parseInt(req.params.id));
-
-  if (!update.isSuccessful) {
-    return res.sendStatus(500);
-  }
-
-  res.sendStatus(201);
-});
+);
 
 // #region Route docs
 /**
  * DELETE /api/property/{id}
  * @tags Properties
  * @summary Return details of one selected property based on the ID
- * @deprecated
+ * @security TokenAuth
  * @param {integer} id.path.required Numeric Id of the property
  * @return 204 - Property successfully deleted
  * @return 400 - ID must be an integer. Please, try again
@@ -247,16 +272,21 @@ router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
 // #endregion
 router.delete(
   "/property/:id",
+  auth(),
   validation(IDRequest, "params"),
   async (_req, res) => {
-    const del = await delProperty(res.locals.data.id);
+    const del = await delProperty(res.locals.data.id, res.locals.auth.userId);
 
     if (!del.isSuccessful) {
       return res.sendStatus(500);
     }
 
-    if (del.result!.length <= 0) {
-      return res.sendStatus(404);
+    if (!del.result?.canModify) {
+      return res.sendStatus(403);
+    }
+
+    if (!del.result.modified) {
+      return res.sendStatus(500);
     }
 
     res.sendStatus(204);

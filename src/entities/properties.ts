@@ -1,20 +1,62 @@
+import { Expose } from "class-transformer";
 import {
-  IsEmail,
+  IsInt,
   IsLatitude,
   IsLongitude,
   IsNumber,
+  IsOptional,
+  IsPositive,
   IsString,
+  Max,
+  MaxLength,
+  Min,
 } from "class-validator";
 
 abstract class Property {
+  @Expose()
+  @IsString()
+  @MaxLength(40)
   address!: string;
+  @Expose()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(999)
+  @IsPositive()
   terrainHeight!: number;
+  @Expose()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(999)
+  @IsPositive()
   terrainWidth!: number;
+  @Expose()
+  @IsNumber({ maxDecimalPlaces: 4 })
+  @Max(999999999)
+  @IsPositive()
   price!: number;
+  @Expose()
+  @IsInt()
+  @Max(1)
+  @Min(1)
+  @IsPositive()
   contractType!: number;
+  @Expose()
+  @IsInt()
+  @Max(99)
+  @IsPositive()
   bedroomAmount!: number;
+  @Expose()
+  @IsInt()
+  @Max(99)
+  @IsPositive()
   bathroomAmount!: number;
+  @Expose()
+  @IsInt()
+  @Max(99)
+  @IsPositive()
   garageSize!: number;
+  @Expose()
+  @IsInt()
+  @Max(99)
+  @IsPositive()
   floorAmount!: number;
 }
 
@@ -68,31 +110,22 @@ export class PropertyData extends Property {
  * @property {number} currencyId - Id of the type of price currency
  */
 export class PropertyRequest extends Property {
+  @Expose()
   @IsString()
-  address!: string;
-  @IsString()
+  @MaxLength(250)
   description!: string;
+  @Expose()
   @IsNumber()
-  price!: number;
   @IsLatitude()
   latitude!: number;
+  @Expose()
+  @IsNumber()
   @IsLongitude()
   longitude!: number;
+  @Expose()
   @IsNumber()
-  terrainHeight!: number;
-  @IsNumber()
-  terrainWidth!: number;
-  @IsNumber()
-  bedroomAmount!: number;
-  @IsNumber()
-  bathroomAmount!: number;
-  @IsNumber()
-  floorAmount!: number;
-  @IsNumber()
-  garageSize!: number;
-  @IsNumber()
-  contractType!: number;
-  @IsNumber()
+  @Max(3)
+  @IsPositive()
   currencyId!: number;
 }
 
@@ -141,17 +174,17 @@ export class PhotoData {
  */
 export class PropertyPhotos {}
 
-const SORT_ORDER = ["", "price"] as const
-type Order = typeof SORT_ORDER
-export type SortOrder = Order[number]
+const SORT_ORDER = ["", "price"] as const;
+type Order = typeof SORT_ORDER;
+export type SortOrder = Order[number];
 
 export function isOrder(value: string): value is SortOrder {
-  return SORT_ORDER.includes(value as SortOrder)
+  return SORT_ORDER.includes(value as SortOrder);
 }
 
 export const sortOrder = {
   price: "price",
-  "": "propertyId"
+  "": "propertyId",
 };
 
 export const BEDROOM_FILTERS = [
@@ -161,4 +194,38 @@ export const BEDROOM_FILTERS = [
   "`bedroomAmount` = 3",
   "`bedroomAmount` = 4",
   "`bedroomAmount` >= 5",
-]
+];
+
+export class PartialPropertyRequest extends PropertyRequest {
+  @IsOptional()
+  address!: string;
+  @IsOptional()
+  description!: string;
+  @IsOptional()
+  price!: number;
+  @IsOptional()
+  latitude!: number;
+  @IsOptional()
+  longitude!: number;
+  @IsOptional()
+  terrainHeight!: number;
+  @IsOptional()
+  terrainWidth!: number;
+  @IsOptional()
+  bedroomAmount!: number;
+  @IsOptional()
+  bathroomAmount!: number;
+  @IsOptional()
+  floorAmount!: number;
+  @IsOptional()
+  garageSize!: number;
+  @IsOptional()
+  contractType!: number;
+  @IsOptional()
+  currencyId!: number;
+}
+
+export interface ModificationData {
+  canModify: boolean;
+  modified: boolean;
+}
