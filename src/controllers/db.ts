@@ -1,9 +1,5 @@
 export function createInsertQuery(table: string, object: object): string {
-  const parsedValues = Object.values(object).map((value) =>
-    typeof value === "string" ? `'${value}'` : value.toString()
-  );
+  const columns = Object.keys(object);
 
-  return `INSERT INTO ${table} (${Object.keys(
-    object
-  )}) VALUES (${parsedValues})`;
+  return `INSERT INTO ${table} (${columns}) VALUES (${columns.map(() => "?")})`;
 }
