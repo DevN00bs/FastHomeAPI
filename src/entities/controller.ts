@@ -1,5 +1,3 @@
-import { IsInt } from "class-validator";
-
 export interface LoginResult {
   passwordsMatch: boolean;
   token?: string;
@@ -16,6 +14,5 @@ export interface ControllerResponse<T> {
  * @property {integer} id - ID of the property
  */
 export class IDRequest {
-  @IsInt()
   id!: number;
 }
