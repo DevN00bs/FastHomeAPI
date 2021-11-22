@@ -245,11 +245,11 @@ router.put(
       return res.sendStatus(500);
     }
 
-    if (!update.result?.canEdit) {
+    if (!update.result?.canModify) {
       return res.sendStatus(403);
     }
 
-    if (!update.result.updated) {
+    if (!update.result.modified) {
       return res.sendStatus(500);
     }
 
@@ -262,7 +262,7 @@ router.put(
  * DELETE /api/property/{id}
  * @tags Properties
  * @summary Return details of one selected property based on the ID
- * @deprecated
+ * @security TokenAuth
  * @param {integer} id.path.required Numeric Id of the property
  * @return 204 - Property successfully deleted
  * @return 400 - ID must be an integer. Please, try again
@@ -272,6 +272,7 @@ router.put(
 // #endregion
 router.delete(
   "/property/:id",
+  auth(),
   validation(IDRequest, "params"),
   async (_req, res) => {
     const del = await delProperty(res.locals.data.id);

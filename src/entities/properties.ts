@@ -225,7 +225,7 @@ export class PartialPropertyRequest extends PropertyRequest {
   currencyId!: number;
 }
 
-export interface UpdateData {
-  canEdit: boolean;
-  updated: boolean;
+export interface ModificationData {
+  canModify: boolean;
+  modified: boolean;
 }
