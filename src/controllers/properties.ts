@@ -9,6 +9,7 @@ import {
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
+import { createInsertQuery } from "./db";
 
 export async function getPropertiesList(
   order: SortOrder,
@@ -19,9 +20,9 @@ export async function getPropertiesList(
     conn = await pool.getConnection();
 
     const result: BasicPropertyData[] = await conn.query(
-      `SELECT * FROM BasicPropertyData WHERE ${BEDROOM_FILTERS[filter]} ORDER BY ${conn.escapeId(
-        sortOrder[order]
-      )}`
+      `SELECT * FROM BasicPropertyData WHERE ${
+        BEDROOM_FILTERS[filter]
+      } ORDER BY ${conn.escapeId(sortOrder[order])}`
     );
     return { isSuccessful: true, result };
   } catch (e) {
@@ -57,27 +58,13 @@ export async function postProperty(
   id: number
 ): Promise<ControllerResponse<number>> {
   let conn;
+  const merged = { ...data, vendorUserId: id };
 
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      "INSERT INTO Properties(address,description,price,latitude,longitude,terrainHeight,terrainWidth,bedroomAmount,bathroomAmount,floorAmount,garageSize,vendorUserId,contractType,currencyId) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-      [
-        data.address,
-        data.description,
-        data.price,
-        data.latitude,
-        data.longitude,
-        data.terrainHeight,
-        data.terrainWidth,
-        data.bedroomAmount,
-        data.bathroomAmount,
-        data.floorAmount,
-        data.garageSize,
-        id,
-        data.contractType,
-        data.currencyId,
-      ]
+      createInsertQuery("Properties", merged),
+      Object.values(merged)
     );
     return { isSuccessful: result.affectedRows === 1, result: result.insertId };
   } catch (e) {
