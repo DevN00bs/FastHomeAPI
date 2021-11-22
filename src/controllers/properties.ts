@@ -92,7 +92,10 @@ export async function updateProperty(
       id
     );
     if (userId !== ownerData[0].vendorUserId) {
-      return { isSuccessful: true, result: { canModify: false, modified: false } };
+      return {
+        isSuccessful: true,
+        result: { canModify: false, modified: false },
+      };
     }
 
     const result = await conn.query(
@@ -101,7 +104,7 @@ export async function updateProperty(
     );
     return {
       isSuccessful: true,
-      result: { canModify: true, modified: result.affectedRows },
+      result: { canModify: true, modified: result.affectedRows === 1 },
     };
   } catch (e) {
     console.error("Something went wrong", e);
@@ -111,16 +114,33 @@ export async function updateProperty(
   }
 }
 
-export async function delProperty(id: number) {
+export async function delProperty(
+  id: number,
+  userId: number
+): Promise<ControllerResponse<ModificationData>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
-    const result = await conn.query(
-      `DELETE FROM Properties WHERE propertyId= ?`,
-      [id]
+    const ownerData = await conn.query(
+      "SELECT vendorUserId FROM Properties WHERE propertyId = ?",
+      id
     );
-    return { isSuccessful: true, result };
+    if (userId !== ownerData[0].vendorUserId) {
+      return {
+        isSuccessful: true,
+        result: { canModify: false, modified: false },
+      };
+    }
+
+    const result = await conn.query(
+      "DELETE FROM Properties WHERE propertyId = ?",
+      id
+    );
+    return {
+      isSuccessful: true,
+      result: { canModify: true, modified: result.affectedRows === 1 },
+    };
   } catch (e) {
     console.error("Something went wrong", e);
     return { isSuccessful: false };

@@ -275,14 +275,18 @@ router.delete(
   auth(),
   validation(IDRequest, "params"),
   async (_req, res) => {
-    const del = await delProperty(res.locals.data.id);
+    const del = await delProperty(res.locals.data.id, res.locals.auth.userId);
 
     if (!del.isSuccessful) {
       return res.sendStatus(500);
     }
 
-    if (del.result!.length <= 0) {
-      return res.sendStatus(404);
+    if (!del.result?.canModify) {
+      return res.sendStatus(403);
+    }
+
+    if (!del.result.modified) {
+      return res.sendStatus(500);
     }
 
     res.sendStatus(204);
