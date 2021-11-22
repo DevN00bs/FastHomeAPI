@@ -224,3 +224,8 @@ export class PartialPropertyRequest extends PropertyRequest {
   @IsOptional()
   currencyId!: number;
 }
+
+export interface UpdateData {
+  canEdit: boolean;
+  updated: boolean;
+}

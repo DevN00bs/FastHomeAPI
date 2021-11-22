@@ -6,6 +6,7 @@ import {
   PropertyRequest,
   SortOrder,
   sortOrder,
+  UpdateData,
 } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
@@ -76,16 +77,32 @@ export async function postProperty(
   }
 }
 
-export async function updateProperty(data: PartialPropertyRequest, id: number) {
+export async function updateProperty(
+  data: PartialPropertyRequest,
+  id: number,
+  userId: number
+): Promise<ControllerResponse<UpdateData>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
+
+    const ownerData = await conn.query(
+      "SELECT vendorUserId FROM Properties WHERE propertyId = ?",
+      id
+    );
+    if (userId !== ownerData[0].vendorUserId) {
+      return { isSuccessful: true, result: { canEdit: false, updated: false } };
+    }
+
     const result = await conn.query(
       `${createUpdateQuery("Properties", data)} WHERE propertyId = ?`,
       [...Object.values(data), id]
     );
-    return { isSuccessful: true, result };
+    return {
+      isSuccessful: true,
+      result: { canEdit: true, updated: result.affectedRows },
+    };
   } catch (e) {
     console.error("Something went wrong", e);
     return { isSuccessful: false };

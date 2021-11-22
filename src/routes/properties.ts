@@ -1,4 +1,4 @@
-import { query, Router } from "express";
+import { Router } from "express";
 import upload from "../conf/images";
 import {
   getPropertiesList,
@@ -13,7 +13,6 @@ import {
   PropertyRequest,
   isOrder,
   SortOrder,
-  sortOrder,
   PartialPropertyRequest,
 } from "../entities/properties";
 import auth from "../middleware/auth";
@@ -238,14 +237,23 @@ router.put(
 
     const update = await updateProperty(
       res.locals.data,
-      parseInt(req.params.id)
+      parseInt(req.params.id),
+      res.locals.auth.userId
     );
 
     if (!update.isSuccessful) {
       return res.sendStatus(500);
     }
 
-    res.sendStatus(201);
+    if (!update.result?.canEdit) {
+      return res.sendStatus(403);
+    }
+
+    if (!update.result.updated) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(204);
   }
 );
 
