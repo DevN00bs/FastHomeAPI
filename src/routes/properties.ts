@@ -212,7 +212,7 @@ router.post(
  * PUT /api/property/{id}
  * @tags Properties
  * @summary Edit the details of a property with the given ID
- * @deprecated
+ * @security TokenAuth
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
  * @return 201 - Everything went ok, the edition was successful
@@ -229,6 +229,7 @@ router.post(
 // #endregion
 router.put(
   "/property/:id",
+  auth(),
   validation(PartialPropertyRequest),
   async (req, res) => {
     if (Number.isNaN(req.params.id)) {
