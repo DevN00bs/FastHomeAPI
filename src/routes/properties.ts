@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { query, Router } from "express";
 import upload from "../conf/images";
 import {
   getPropertiesList,
