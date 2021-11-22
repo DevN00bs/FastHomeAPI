@@ -9,7 +9,13 @@ import {
   savePhotos,
 } from "../controllers/properties";
 import { IDRequest } from "../entities/controller";
-import { PropertyRequest, isOrder, SortOrder, sortOrder } from "../entities/properties";
+import {
+  PropertyRequest,
+  isOrder,
+  SortOrder,
+  sortOrder,
+  PartialPropertyRequest,
+} from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
 
@@ -63,17 +69,20 @@ const router = Router();
 // #endregion
 router.get("/properties", async (req, res) => {
   if (Number.isNaN(req.query.bedrooms)) {
-    return res.sendStatus(400)
+    return res.sendStatus(400);
   }
 
-  const sort = req.query.sort === undefined ? "" : req.query.sort as string
-  const filter = req.query.bedrooms === undefined ? 0 : parseInt(req.query.bedrooms as string)
+  const sort = req.query.sort === undefined ? "" : (req.query.sort as string);
+  const filter =
+    req.query.bedrooms === undefined
+      ? 0
+      : parseInt(req.query.bedrooms as string);
 
   if (!isOrder(sort) || filter < 0 || filter > 5) {
     return res.sendStatus(400);
   }
 
-  console.log(sort)
+  console.log(sort);
 
   const response = await getPropertiesList(sort as SortOrder, filter);
 
@@ -218,19 +227,26 @@ router.post(
  * }
  */
 // #endregion
-router.put("/property/:id", validation(PropertyRequest), async (req, res) => {
-  if (Number.isNaN(req.params.id)) {
-    return res.status(400).json({ invalid: ["id"] });
+router.put(
+  "/property/:id",
+  validation(PartialPropertyRequest),
+  async (req, res) => {
+    if (Number.isNaN(req.params.id)) {
+      return res.status(400).json({ invalid: ["id"] });
+    }
+
+    const update = await updateProperty(
+      res.locals.data,
+      parseInt(req.params.id)
+    );
+
+    if (!update.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(201);
   }
-
-  const update = await updateProperty(res.locals.data, parseInt(req.params.id));
-
-  if (!update.isSuccessful) {
-    return res.sendStatus(500);
-  }
-
-  res.sendStatus(201);
-});
+);
 
 // #region Route docs
 /**

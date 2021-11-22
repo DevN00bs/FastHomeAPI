@@ -3,6 +3,7 @@ import {
   IsLatitude,
   IsLongitude,
   IsNumber,
+  IsOptional,
   IsString,
 } from "class-validator";
 
@@ -162,3 +163,32 @@ export const BEDROOM_FILTERS = [
   "`bedroomAmount` = 4",
   "`bedroomAmount` >= 5",
 ]
+
+export class PartialPropertyRequest implements PropertyRequest {
+  @IsOptional()
+  address!: string;
+  @IsOptional()
+  description!: string;
+  @IsOptional()
+  price!: number;
+  @IsOptional()
+  latitude!: number;
+  @IsOptional()
+  longitude!: number;
+  @IsOptional()
+  terrainHeight!: number;
+  @IsOptional()
+  terrainWidth!: number;
+  @IsOptional()
+  bedroomAmount!: number;
+  @IsOptional()
+  bathroomAmount!: number;
+  @IsOptional()
+  floorAmount!: number;
+  @IsOptional()
+  garageSize!: number;
+  @IsOptional()
+  contractType!: number;
+  @IsOptional()
+  currencyId!: number;
+}

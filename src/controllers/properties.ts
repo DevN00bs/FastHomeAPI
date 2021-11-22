@@ -1,6 +1,7 @@
 import {
   BasicPropertyData,
   BEDROOM_FILTERS,
+  PartialPropertyRequest,
   PropertyData,
   PropertyRequest,
   SortOrder,
@@ -9,7 +10,7 @@ import {
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
-import { createInsertQuery } from "./db";
+import { createInsertQuery, createUpdateQuery } from "./db";
 
 export async function getPropertiesList(
   order: SortOrder,
@@ -75,27 +76,14 @@ export async function postProperty(
   }
 }
 
-export async function updateProperty(data: PropertyRequest, id: number) {
+export async function updateProperty(data: PartialPropertyRequest, id: number) {
   let conn;
 
   try {
     conn = await pool.getConnection();
     const result = await conn.query(
-      `UPDATE Properties SET address= ?,description= ?,price= ?, latitude= ?,longitude= ?,terrainHeight= ?,terrainWidth= ?,bedroomAmount= ?,bathroomAmount= ?, floorAmount= ?,garageSize= ? WHERE propertyId= ?`,
-      [
-        data.address,
-        data.description,
-        data.price,
-        data.latitude,
-        data.longitude,
-        data.terrainHeight,
-        data.terrainWidth,
-        data.bedroomAmount,
-        data.bathroomAmount,
-        data.floorAmount,
-        data.garageSize,
-        id,
-      ]
+      `${createUpdateQuery("Properties", data)} WHERE propertyId = ?`,
+      [...Object.values(data), id]
     );
     return { isSuccessful: true, result };
   } catch (e) {
