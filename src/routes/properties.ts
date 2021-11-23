@@ -295,14 +295,6 @@ router.put(
 /**
  * DELETE /api/property/{id}
  * @tags Properties
-<<<<<<< HEAD
- * @summary Return details of one selected property based on the ID
- * @security TokenAuth
- * @param {integer} id.path.required Numeric Id of the property
- * @return 204 - Property successfully deleted
- * @return 400 - ID must be an integer. Please, try again
- * @return 404 - A property with the id provided does not exists on the database
-=======
  * @summary Delete a property using its ID
  * @security TokenAuth
  * @param {integer} id.path.required ID of the property
@@ -310,7 +302,6 @@ router.put(
  * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
  * @return 403 - The property specified does not belong to the user logged in, or you are not logged in
  * @return 404 - The property specified was not found in the database
->>>>>>> routes
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
