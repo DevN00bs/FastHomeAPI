@@ -298,7 +298,6 @@ router.delete(
  * POST /api/property/{id}/images
  * @summary Route to upload a property's photos
  * @tags Properties
- * @deprecated
  * @param {integer} id.path.required - The ID of the property to upload the photos to
  * @param {PropertyPhotos} request.body.required - The photos to upload - multipart/form-data
  * @return 201 - Everything went ok, the upload was successful
