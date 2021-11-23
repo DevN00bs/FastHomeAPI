@@ -10,7 +10,7 @@
     "views": "cp -R ./src/views ./dist",
     "key": "npm run file && npm run decode",
     "file": "echo $IMAGES_KEY > ./key.enc",
-    "decode": "openssl enc -d -base64 -in key.enc -out key.json"
+    "decode": "openssl base64 -d -A -in key.enc -out key.json"
   },
   "engines": {
     "node": "^16.13.0",
