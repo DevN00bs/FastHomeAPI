@@ -1,4 +1,4 @@
-import { query, Router } from "express";
+import { Router } from "express";
 import upload from "../conf/images";
 import {
   getPropertiesList,
@@ -212,11 +212,45 @@ router.post(
  * @tags Properties
  * @summary Edit the details of a property with the given ID
  * @security TokenAuth
+<<<<<<< HEAD
  * @param {integer} id.path.required Numeric Id of the property
  * @param {PropertyRequest} request.body.required
  * @return 201 - Everything went ok, the edition was successful
+=======
+ * @param {integer} id.path.required ID of the property to edit
+ * @param {PropertyRequest} request.body.required - The API supports partial upgrades, so you can send only the changes made to the property or send the whole object
+ * @return 204 - Everything went ok, the edition was successful
+>>>>>>> routes
  * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
+ * @return 403 - The property specified does not belong to the user logged in, or you are not logged in
+ * @return 404 - The property specified was not found in the database
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - Update price and description (Partial)
+ * {
+ *  "price": 780000,
+ *  "description": "New description"
+ * }
+ * @example request - Update latitude and longitude (Partial)
+ * {
+ *  "latitude": -28.156954,
+ *  "longitude": -105.227741
+ * }
+ * @example request - Update terrain dimentions (Full)
+ * {
+ *   "address": "158 Main Street",
+ *   "description": "lol",
+ *   "price": 8500,
+ *   "latitude": 28.661655,
+ *   "longitude": -106.040184,
+ *   "terrainHeight": 11,
+ *   "terrainWidth": 12,
+ *   "bedroomAmount": 1,
+ *   "bathroomAmount": 1,
+ *   "floorAmount": 1,
+ *   "garageSize": 1,
+ *   "contractType": 1,
+ *   "currencyId": 1
+ * }
  * @example response - 400 - Invalid latitude
  * {
  *  "missing": [],
@@ -261,12 +295,22 @@ router.put(
 /**
  * DELETE /api/property/{id}
  * @tags Properties
+<<<<<<< HEAD
  * @summary Return details of one selected property based on the ID
  * @security TokenAuth
  * @param {integer} id.path.required Numeric Id of the property
  * @return 204 - Property successfully deleted
  * @return 400 - ID must be an integer. Please, try again
  * @return 404 - A property with the id provided does not exists on the database
+=======
+ * @summary Delete a property using its ID
+ * @security TokenAuth
+ * @param {integer} id.path.required ID of the property
+ * @return 204 - Everything went ok, the deletion was successful
+ * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
+ * @return 403 - The property specified does not belong to the user logged in, or you are not logged in
+ * @return 404 - The property specified was not found in the database
+>>>>>>> routes
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  */
 // #endregion
@@ -296,9 +340,9 @@ router.delete(
 //#region
 /**
  * POST /api/property/{id}/images
- * @summary Route to upload a property's photos
+ * @summary Route to upload a property's photos. Remember, any property without at least the main photo won't show on the list
  * @tags Properties
- * @deprecated
+ * @security TokenAuth
  * @param {integer} id.path.required - The ID of the property to upload the photos to
  * @param {PropertyPhotos} request.body.required - The photos to upload - multipart/form-data
  * @return 201 - Everything went ok, the upload was successful
