@@ -12,14 +12,24 @@ const router = Router();
  * @example response - 200 - Catalogs data
  * {
  *  "currencies": [
- *    "---",
- *    "Mexican Peso - MXN",
- *    "US Dollars - USD"
+ *    {
+ *     "id": 1,
+ *     "currency": "Mexican Peso - MXN"
+ *    },
+ *    {
+ *     "id": 2,
+ *     "currency": "US Dollars - USD"
+ *    }
  *  ],
  *  "contracts": [
- *    "---",
- *    "Purchase",
- *    "Lease"
+ *    {
+ *     "id": 1,
+ *     "contract": "Purchase"
+ *    },
+ *    {
+ *     "id": 2,
+ *     "contract": "Lease"
+ *    }
  *  ]
  * }
  */

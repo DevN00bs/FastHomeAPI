@@ -11,16 +11,7 @@ export async function getCatalogsData(): Promise<ControllerResponse<object>> {
 
     return {
       isSuccessful: true,
-      result: {
-        currencies: [
-          "---",
-          ...currencies.map((currency: any) => currency.currencies),
-        ],
-        contracts: [
-          "---",
-          ...contracts.map((contract: any) => contract.contractName),
-        ],
-      },
+      result: { currencies, contracts },
     };
   } catch (error) {
     console.error("Something went wrong", error);
