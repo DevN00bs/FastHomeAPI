@@ -8,7 +8,9 @@
     "build": "tsc && npm run views && npm run key",
     "heroku-cleanup": "rm -rf ./src",
     "views": "cp -R ./src/views ./dist",
-    "key": "echo $GCS_KEY > ./key.json"
+    "key": "npm run file && npm run decode",
+    "file": "echo $IMAGES_KEY > ./key.enc",
+    "decode": "openssl enc -d -base64 -in key.enc -out key.json"
   },
   "engines": {
     "node": "^16.13.0",
