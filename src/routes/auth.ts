@@ -111,7 +111,7 @@ router.post("/forgot", validation(ForgotPasswordData), async (req, res) => {
  * }
  * @example response - 200 - Authorization token
  * {
- *  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE4LCJwdXJwb3NlIjoiZm9yZ290IiwiaWF0IjoxNjM2NDc4OTc0LCJleHAiOjE2MzY0Nzk2MzR9.hMRnkOxiIxUgt-jlo-7W6GhmIxmsfBxQh4q_by8CVXA"
+ *  "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE4LCJwdXJwb3NlIjoiZm9yZ290IiwiaWF0IjoxNjM2NDc4OTc0LCJleHAiOjE2MzY0Nzk2MzR9.hMRnkOxiIxUgt-jlo-7W6GhmIxmsfBxQh4q_by8CVXA"
  * }
  */
 //#endregion
