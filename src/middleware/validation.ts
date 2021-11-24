@@ -4,7 +4,9 @@ import { RequestHandler } from "express";
 import { ValidationData } from "../entities/auth";
 import { PartialPropertyRequest } from "../entities/properties";
 
-type source = "body" | "params";
+type source = "body" | "params" | "query";
+
+const optionals = [PartialPropertyRequest];
 
 export default function validation(
   type: any,
@@ -13,7 +15,7 @@ export default function validation(
   return async (req, res, next) => {
     const data = plainToClass(type, req[source], {
       excludeExtraneousValues: true,
-      exposeUnsetFields: type !== PartialPropertyRequest
+      exposeUnsetFields: !optionals.includes(type),
     });
     const errors = await validate(data);
 
