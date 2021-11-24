@@ -4,22 +4,24 @@ import {
   PropertyData,
   PropertyRequest,
   ModificationData,
+  PropertyFilters,
 } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
-import { createInsertQuery, createUpdateQuery } from "./db";
+import { createFilterQuery, createInsertQuery, createUpdateQuery } from "./db";
 
-export async function getPropertiesList(): Promise<
-  ControllerResponse<BasicPropertyData[]>
-> {
+export async function getPropertiesList(
+  filters: PropertyFilters
+): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
   try {
     conn = await pool.getConnection();
 
     const result: BasicPropertyData[] = await conn.query(
-      `SELECT * FROM BasicPropertyData`
+      `SELECT * FROM BasicPropertyData ${createFilterQuery(filters)}`
     );
+    console.log(createFilterQuery(filters))
     return { isSuccessful: true, result };
   } catch (e) {
     console.error("Something went wrong", e);

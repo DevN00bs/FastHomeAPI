@@ -12,6 +12,7 @@ import { IDRequest } from "../entities/controller";
 import {
   PropertyRequest,
   PartialPropertyRequest,
+  PropertyFilters,
 } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
@@ -67,15 +68,19 @@ const router = Router();
  *]
  */
 // #endregion
-router.get("/properties", async (_req, res) => {
-  const response = await getPropertiesList();
+router.get(
+  "/properties",
+  validation(PropertyFilters, "query"),
+  async (_req, res) => {
+    const response = await getPropertiesList(res.locals.data);
 
-  if (!response.isSuccessful) {
-    return res.sendStatus(500);
+    if (!response.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.json(response.result);
   }
-
-  res.json(response.result);
-});
+);
 
 // #region Route docs
 /**
