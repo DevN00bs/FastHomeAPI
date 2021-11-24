@@ -1,11 +1,8 @@
 import {
   BasicPropertyData,
-  BEDROOM_FILTERS,
   PartialPropertyRequest,
   PropertyData,
   PropertyRequest,
-  SortOrder,
-  sortOrder,
   ModificationData,
 } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
@@ -13,18 +10,15 @@ import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
 import { createInsertQuery, createUpdateQuery } from "./db";
 
-export async function getPropertiesList(
-  order: SortOrder,
-  filter: number
-): Promise<ControllerResponse<BasicPropertyData[]>> {
+export async function getPropertiesList(): Promise<
+  ControllerResponse<BasicPropertyData[]>
+> {
   let conn;
   try {
     conn = await pool.getConnection();
 
     const result: BasicPropertyData[] = await conn.query(
-      `SELECT * FROM BasicPropertyData WHERE ${
-        BEDROOM_FILTERS[filter]
-      } ORDER BY ${conn.escapeId(sortOrder[order])}`
+      `SELECT * FROM BasicPropertyData`
     );
     return { isSuccessful: true, result };
   } catch (e) {

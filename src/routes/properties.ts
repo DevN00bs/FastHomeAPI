@@ -11,8 +11,6 @@ import {
 import { IDRequest } from "../entities/controller";
 import {
   PropertyRequest,
-  isOrder,
-  SortOrder,
   PartialPropertyRequest,
 } from "../entities/properties";
 import auth from "../middleware/auth";
@@ -25,8 +23,11 @@ const router = Router();
  * GET /api/properties
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
- * @param {string} sort.query - Specify an order to the list. By sending nothing, we sort by creation date - enum:price
- * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:1,2,3,4,5
+ * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:0,1,2,3,4,5
+ * @param {integer} bathrooms.query - Specify the number of bathrooms that a house needs. The number 6 refers to three or more bedrooms - enum:0,1,2,3,4,5,6
+ * @param {integer} garage.query - Specify the number of cars that a garage needs. The number 4 refers to four or more cars - enum:0,1,2,3,4
+ * @param {integer} floors.query - Specify the number of floors that a house needs. The number 3 refers to three or more floors - enum:0,1,2,3
+ * @param {integer} currency.query - Send the ID of the currency you want to filter
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
@@ -66,24 +67,8 @@ const router = Router();
  *]
  */
 // #endregion
-router.get("/properties", async (req, res) => {
-  if (Number.isNaN(req.query.bedrooms)) {
-    return res.sendStatus(400);
-  }
-
-  const sort = req.query.sort === undefined ? "" : (req.query.sort as string);
-  const filter =
-    req.query.bedrooms === undefined
-      ? 0
-      : parseInt(req.query.bedrooms as string);
-
-  if (!isOrder(sort) || filter < 0 || filter > 5) {
-    return res.sendStatus(400);
-  }
-
-  console.log(sort);
-
-  const response = await getPropertiesList(sort as SortOrder, filter);
+router.get("/properties", async (_req, res) => {
+  const response = await getPropertiesList();
 
   if (!response.isSuccessful) {
     return res.sendStatus(500);
@@ -212,15 +197,9 @@ router.post(
  * @tags Properties
  * @summary Edit the details of a property with the given ID
  * @security TokenAuth
-<<<<<<< HEAD
- * @param {integer} id.path.required Numeric Id of the property
- * @param {PropertyRequest} request.body.required
- * @return 201 - Everything went ok, the edition was successful
-=======
  * @param {integer} id.path.required ID of the property to edit
  * @param {PropertyRequest} request.body.required - The API supports partial upgrades, so you can send only the changes made to the property or send the whole object
  * @return 204 - Everything went ok, the edition was successful
->>>>>>> routes
  * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
  * @return 403 - The property specified does not belong to the user logged in, or you are not logged in
  * @return 404 - The property specified was not found in the database
