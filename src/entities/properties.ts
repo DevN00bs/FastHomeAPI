@@ -64,6 +64,7 @@ abstract class Property {
 /**
  * This entity contains all data of a property. Use this on the details page
  * @typedef {object} PropertyData
+ * @property {array<PhotoData>} photos - Photos of the property with an optional, small description
  * @property {integer} propertyId - Property ID again because I'm lazy. You can ignore this safely
  * @property {string} address - Address of the property. Used as the page's title
  * @property {string} description - Description of property, not characteristics.
@@ -83,6 +84,7 @@ abstract class Property {
  * @property {number} longitude - Latitude of the property's coordinates. Use it for create a map
  */
 export class PropertyData extends Property {
+  photos!: PhotoData[];
   propertyId!: number;
   description!: string;
   username!: string;

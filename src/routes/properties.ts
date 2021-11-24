@@ -94,6 +94,16 @@ router.get(
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
+ *   "photos": [
+ *      {
+ *        "url": "https://i.imgur.com/9y2CCs7.jpeg",
+ *        "description": null
+ *      },
+ *      {
+ *        "url": "https://i.imgur.com/WGx7R7J.jpeg",
+ *        "description": "Has a big, beautiful bathroom!1!! Buy NOW!"
+ *      }
+ *    ],
  *   "propertyId": 1,
  *   "address": "158 Main Street",
  *   "description": "lol",
@@ -124,11 +134,11 @@ router.get(
       return res.sendStatus(500);
     }
 
-    if (response.result!.length <= 0) {
+    if (!response.result) {
       return res.sendStatus(404);
     }
 
-    res.json(response.result![0]);
+    res.json(response.result);
   }
 );
 

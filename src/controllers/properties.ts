@@ -21,7 +21,6 @@ export async function getPropertiesList(
     const result: BasicPropertyData[] = await conn.query(
       `SELECT * FROM BasicPropertyData ${createFilterQuery(filters)}`
     );
-    console.log(createFilterQuery(filters))
     return { isSuccessful: true, result };
   } catch (e) {
     console.error("Something went wrong", e);
@@ -33,16 +32,21 @@ export async function getPropertiesList(
 
 export async function getPropertyById(
   id: number
-): Promise<ControllerResponse<PropertyData[]>> {
+): Promise<ControllerResponse<PropertyData>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
-    const result: PropertyData[] = await conn.query(
+    const dbResult: PropertyData[] = await conn.query(
       "SELECT * FROM PropertyData WHERE propertyId = ?",
       [id]
     );
-    return { isSuccessful: true, result };
+    dbResult[0].photos = await conn.query(
+      "SELECT * FROM PhotoGallery WHERE ignoreMe = ?",
+      id
+    );
+
+    return { isSuccessful: true, result: dbResult[0] };
   } catch (e) {
     console.error("Something went wrong", e);
     return { isSuccessful: false };
