@@ -11,9 +11,8 @@ import {
 import { IDRequest } from "../entities/controller";
 import {
   PropertyRequest,
-  isOrder,
-  SortOrder,
   PartialPropertyRequest,
+  PropertyFilters,
 } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
@@ -25,8 +24,11 @@ const router = Router();
  * GET /api/properties
  * @tags Properties
  * @summary Returns a list of properties that should be displayed on a list
- * @param {string} sort.query - Specify an order to the list. By sending nothing, we sort by creation date - enum:price
- * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:1,2,3,4,5
+ * @param {integer} bedrooms.query - Specify the number of bedrooms that a house needs. The number 5 refers to five or more bedrooms - enum:0,1,2,3,4,5
+ * @param {integer} bathrooms.query - Specify the number of bathrooms that a house needs. The number 6 refers to three or more bedrooms - enum:0,1,2,3,4,5,6
+ * @param {integer} garage.query - Specify the number of cars that a garage needs. The number 4 refers to four or more cars - enum:0,1,2,3,4
+ * @param {integer} floors.query - Specify the number of floors that a house needs. The number 3 refers to three or more floors - enum:0,1,2,3
+ * @param {integer} currency.query - Send the ID of the currency you want to filter
  * @return {array<BasicPropertyData>} 200 - Everything went ok, and we return a list of properties. See example below
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example list of properties
@@ -66,31 +68,19 @@ const router = Router();
  *]
  */
 // #endregion
-router.get("/properties", async (req, res) => {
-  if (Number.isNaN(req.query.bedrooms)) {
-    return res.sendStatus(400);
+router.get(
+  "/properties",
+  validation(PropertyFilters, "query"),
+  async (_req, res) => {
+    const response = await getPropertiesList(res.locals.data);
+
+    if (!response.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.json(response.result);
   }
-
-  const sort = req.query.sort === undefined ? "" : (req.query.sort as string);
-  const filter =
-    req.query.bedrooms === undefined
-      ? 0
-      : parseInt(req.query.bedrooms as string);
-
-  if (!isOrder(sort) || filter < 0 || filter > 5) {
-    return res.sendStatus(400);
-  }
-
-  console.log(sort);
-
-  const response = await getPropertiesList(sort as SortOrder, filter);
-
-  if (!response.isSuccessful) {
-    return res.sendStatus(500);
-  }
-
-  res.json(response.result);
-});
+);
 
 // #region Route docs
 /**
@@ -104,6 +94,16 @@ router.get("/properties", async (req, res) => {
  * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
  * @example response - 200 - An example of a property
  * {
+ *   "photos": [
+ *      {
+ *        "url": "https://i.imgur.com/9y2CCs7.jpeg",
+ *        "description": null
+ *      },
+ *      {
+ *        "url": "https://i.imgur.com/WGx7R7J.jpeg",
+ *        "description": "Has a big, beautiful bathroom!1!! Buy NOW!"
+ *      }
+ *    ],
  *   "propertyId": 1,
  *   "address": "158 Main Street",
  *   "description": "lol",
@@ -134,11 +134,11 @@ router.get(
       return res.sendStatus(500);
     }
 
-    if (response.result!.length <= 0) {
+    if (!response.result) {
       return res.sendStatus(404);
     }
 
-    res.json(response.result![0]);
+    res.json(response.result);
   }
 );
 

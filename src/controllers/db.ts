@@ -1,3 +1,5 @@
+import { PropertyFilters, filters } from "../entities/properties";
+
 export function createInsertQuery(table: string, object: object): string {
   const columns = Object.keys(object);
 
@@ -8,4 +10,28 @@ export function createUpdateQuery(table: string, object: object): string {
   return `UPDATE ${table} SET ${Object.keys(object).map(
     (obj) => `${obj} = ?`
   )}`;
+}
+
+export function createFilterQuery(request: PropertyFilters): string {
+  const requestKeys = Object.keys(request);
+
+  if (requestKeys.length === 0) {
+    return "";
+  }
+
+  const availableFilters = Object.keys(filters);
+  const definedFilters = requestKeys.filter((key) =>
+    availableFilters.includes(key)
+  );
+  const parsedFilters = [
+    ...definedFilters.map(
+      (filter) =>
+        filters[filter as "bedrooms" | "bathrooms" | "garage" | "floors"][
+          request[filter as keyof PropertyFilters]
+        ]
+    ),
+    request.currency ? `\`ignoreMe\` = ${request.currency}` : undefined,
+  ];
+
+  return `WHERE ${parsedFilters.join(" AND ")}`;
 }

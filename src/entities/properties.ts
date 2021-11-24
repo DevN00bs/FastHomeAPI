@@ -4,6 +4,7 @@ import {
   IsLatitude,
   IsLongitude,
   IsNumber,
+  IsNumberString,
   IsOptional,
   IsPositive,
   IsString,
@@ -63,6 +64,7 @@ abstract class Property {
 /**
  * This entity contains all data of a property. Use this on the details page
  * @typedef {object} PropertyData
+ * @property {array<PhotoData>} photos - Photos of the property with an optional, small description
  * @property {integer} propertyId - Property ID again because I'm lazy. You can ignore this safely
  * @property {string} address - Address of the property. Used as the page's title
  * @property {string} description - Description of property, not characteristics.
@@ -82,6 +84,7 @@ abstract class Property {
  * @property {number} longitude - Latitude of the property's coordinates. Use it for create a map
  */
 export class PropertyData extends Property {
+  photos!: PhotoData[];
   propertyId!: number;
   description!: string;
   username!: string;
@@ -174,28 +177,6 @@ export class PhotoData {
  */
 export class PropertyPhotos {}
 
-const SORT_ORDER = ["", "price"] as const;
-type Order = typeof SORT_ORDER;
-export type SortOrder = Order[number];
-
-export function isOrder(value: string): value is SortOrder {
-  return SORT_ORDER.includes(value as SortOrder);
-}
-
-export const sortOrder = {
-  price: "price",
-  "": "propertyId",
-};
-
-export const BEDROOM_FILTERS = [
-  "`bedroomAmount` > 0",
-  "`bedroomAmount` = 1",
-  "`bedroomAmount` = 2",
-  "`bedroomAmount` = 3",
-  "`bedroomAmount` = 4",
-  "`bedroomAmount` >= 5",
-];
-
 export class PartialPropertyRequest extends PropertyRequest {
   @IsOptional()
   address!: string;
@@ -229,3 +210,59 @@ export interface ModificationData {
   canModify: boolean;
   modified: boolean;
 }
+
+export class PropertyFilters {
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  bedrooms!: number;
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  bathrooms!: number;
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  garage!: number;
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  floors!: number;
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  currency!: number;
+}
+
+export const filters = {
+  bedrooms: [
+    "`bedroomAmount` > 0",
+    "`bedroomAmount` = 1",
+    "`bedroomAmount` = 2",
+    "`bedroomAmount` = 3",
+    "`bedroomAmount` = 4",
+    "`bedroomAmount` >= 5",
+  ],
+  bathrooms: [
+    "`bathroomAmount` > 0",
+    "`bathroomAmount` = 0.5",
+    "`bathroomAmount` = 1",
+    "`bathroomAmount` = 1.5",
+    "`bathroomAmount` = 2",
+    "`bathroomAmount` = 2.5",
+    "`bathroomAmount` >= 3",
+  ],
+  garage: [
+    "`garageSize` > 0",
+    "`garageSize` = 1",
+    "`garageSize` = 2",
+    "`garageSize` = 3",
+    "`garageSize` >= 4",
+  ],
+  floors: [
+    "`floorAmount` > 0",
+    "`floorAmount` = 1",
+    "`floorAmount` = 2",
+    "`floorAmount` >= 3",
+  ],
+};

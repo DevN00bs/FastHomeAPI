@@ -1,30 +1,25 @@
 import {
   BasicPropertyData,
-  BEDROOM_FILTERS,
   PartialPropertyRequest,
   PropertyData,
   PropertyRequest,
-  SortOrder,
-  sortOrder,
   ModificationData,
+  PropertyFilters,
 } from "../entities/properties";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import { PoolConnection } from "mariadb";
-import { createInsertQuery, createUpdateQuery } from "./db";
+import { createFilterQuery, createInsertQuery, createUpdateQuery } from "./db";
 
 export async function getPropertiesList(
-  order: SortOrder,
-  filter: number
+  filters: PropertyFilters
 ): Promise<ControllerResponse<BasicPropertyData[]>> {
   let conn;
   try {
     conn = await pool.getConnection();
 
     const result: BasicPropertyData[] = await conn.query(
-      `SELECT * FROM BasicPropertyData WHERE ${
-        BEDROOM_FILTERS[filter]
-      } ORDER BY ${conn.escapeId(sortOrder[order])}`
+      `SELECT * FROM BasicPropertyData ${createFilterQuery(filters)}`
     );
     return { isSuccessful: true, result };
   } catch (e) {
@@ -37,16 +32,21 @@ export async function getPropertiesList(
 
 export async function getPropertyById(
   id: number
-): Promise<ControllerResponse<PropertyData[]>> {
+): Promise<ControllerResponse<PropertyData>> {
   let conn;
 
   try {
     conn = await pool.getConnection();
-    const result: PropertyData[] = await conn.query(
+    const dbResult: PropertyData[] = await conn.query(
       "SELECT * FROM PropertyData WHERE propertyId = ?",
       [id]
     );
-    return { isSuccessful: true, result };
+    dbResult[0].photos = await conn.query(
+      "SELECT * FROM PhotoGallery WHERE ignoreMe = ?",
+      id
+    );
+
+    return { isSuccessful: true, result: dbResult[0] };
   } catch (e) {
     console.error("Something went wrong", e);
     return { isSuccessful: false };
