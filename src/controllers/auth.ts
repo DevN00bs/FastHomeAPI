@@ -43,6 +43,10 @@ export async function checkIfUserExists(
     );
     return { isSuccessful: true, result: Boolean(userData[0].emailVerified) };
   } catch (error) {
+    if (error instanceof TypeError) {
+      return { isSuccessful: true, result: false };
+    }
+
     console.error("Something went wrong", error);
     return { isSuccessful: false };
   } finally {
@@ -70,7 +74,9 @@ export async function loginUser(
       isSuccessful: true,
       result: {
         passwordsMatch: true,
-        token: "Bearer " + jwt.sign({ userId: userData[0].userId }, process.env.SECRET!),
+        token:
+          "Bearer " +
+          jwt.sign({ userId: userData[0].userId }, process.env.SECRET!),
       },
     };
   } catch (error) {
