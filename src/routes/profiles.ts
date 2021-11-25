@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { getUserDetails } from "../controllers/profiles";
 import { getPropertiesList } from "../controllers/properties";
 import { PropertyFilters } from "../entities/properties";
 import auth from "../middleware/auth";
@@ -67,5 +68,15 @@ router.get(
     res.json(userProperties.result);
   }
 );
+
+router.get("/details", auth(), async (_req, res) => {
+  const details = await getUserDetails(res.locals.auth.userId);
+
+  if (!details.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  res.json(!details.result ? {} : details.result);
+});
 
 export default router;
