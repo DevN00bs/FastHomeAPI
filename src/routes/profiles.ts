@@ -69,6 +69,23 @@ router.get(
   }
 );
 
+/**
+ * GET /api/profile/details
+ * @tags Profiles
+ * @summary Get user's details. Use on the profiles page only
+ * @security TokenAuth
+ * @return {UserDetails} 200 - Everything went ok, and we return the user's details
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example response - 200 - User's details example
+ * {
+ *  "userId": 1,
+ *  "phone": "8715555555",
+ *  "email": "contact@example.net",
+ *  "fbLink": "https://facebook.com/example",
+ *  "instaLink": null,
+ *  "twitLink": "https://twitter.com/example"
+ * }
+ */
 router.get("/details", auth(), async (_req, res) => {
   const details = await getUserDetails(res.locals.auth.userId);
 
