@@ -19,7 +19,7 @@ const mailer: HbsTransporter = nodemailer
     "compile",
     hbs({
       viewEngine: {
-        defaultLayout: "password.handlebars",
+        defaultLayout: undefined,
         layoutsDir: path.join(__dirname, "..", "views"),
       },
       viewPath: path.join(__dirname, "..", "views"),
