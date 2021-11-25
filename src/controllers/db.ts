@@ -30,8 +30,15 @@ export function createFilterQuery(request: PropertyFilters): string {
           request[filter as keyof PropertyFilters]
         ]
     ),
-    request.currency ? `\`ignoreMe\` = ${request.currency}` : undefined,
   ];
+
+  if (request.currency) {
+    parsedFilters.push(`\`ignoreMe\` = ${request.currency}`);
+  }
+
+  if (request.userId) {
+    parsedFilters.push(`\`ignoreMeToo\` = ${request.userId}`);
+  }
 
   return `WHERE ${parsedFilters.join(" AND ")}`;
 }

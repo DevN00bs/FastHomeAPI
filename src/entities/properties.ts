@@ -232,6 +232,10 @@ export class PropertyFilters {
   @IsOptional()
   @IsNumberString({ no_symbols: true })
   currency!: number;
+  @Expose()
+  @IsOptional()
+  @IsNumberString({ no_symbols: true })
+  userId!: number;
 }
 
 export const filters = {
