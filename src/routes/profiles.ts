@@ -93,7 +93,18 @@ router.get("/details", auth(), async (_req, res) => {
     return res.sendStatus(500);
   }
 
-  res.json(!details.result ? {} : details.result);
+  if (!details.result) {
+    return res.json({
+      userId: res.locals.auth.userId,
+      phone: null,
+      email: null,
+      fbLink: null,
+      instaLink: null,
+      twitLink: null,
+    });
+  }
+
+  res.json(details.result);
 });
 
 export default router;
