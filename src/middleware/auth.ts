@@ -10,6 +10,14 @@ export default function auth(): RequestHandler {
       return res.sendStatus(403);
     }
 
+    if (req.headers.authorization.startsWith("Bearer Bearer")) {
+      return res
+        .status(400)
+        .send(
+          "Hello Swagger user (hopefully you're seeing this while using Swagger). Please, in the 'Authenticate' dialog box put only the token without the 'Bearer' thing, Swagger adds it automatically. Thank you and have a good day!"
+        );
+    }
+
     try {
       const payload = jwt.verify(
         req.headers.authorization.split(" ")[1],
