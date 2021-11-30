@@ -21,7 +21,7 @@ export async function createUser(
       data.email,
       encPassword,
     ]);
-    return { isSuccessful: result.affectedRows === 1 };
+    return { isSuccessful: result.affectedRows === 2 };
   } catch (error) {
     console.error("Something went wrong", error);
     return { isSuccessful: false };
