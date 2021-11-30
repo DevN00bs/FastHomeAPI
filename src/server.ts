@@ -1,6 +1,7 @@
 import expressJSDocSwagger from "express-jsdoc-swagger";
 import propertiesRoutes from "./routes/properties";
 import profileRoutes from "./routes/profiles";
+import landingRoutes from "./routes/landing";
 import miscRoutes from "./routes/misc";
 import authRoutes from "./routes/auth";
 import express from "express";
@@ -52,6 +53,7 @@ app.use("/api", propertiesRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/profile", profileRoutes);
+app.use(landingRoutes);
 
 app.listen(port, () => {
   console.log("Server running on port " + port);
