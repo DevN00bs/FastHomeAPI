@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getUserDetails } from "../controllers/profiles";
+import { getUserDetails, updateUserDetails } from "../controllers/profiles";
 import { getPropertiesList } from "../controllers/properties";
+import { UserDetailsRequest } from "../entities/profiles";
 import { PropertyFilters } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
@@ -106,5 +107,23 @@ router.get("/details", auth(), async (_req, res) => {
 
   res.json(details.result);
 });
+
+router.put(
+  "/details",
+  auth(),
+  validation(UserDetailsRequest),
+  async (_req, res) => {
+    const putDetails = await updateUserDetails(
+      res.locals.data,
+      res.locals.auth.userId
+    );
+
+    if (!putDetails.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(204);
+  }
+);
 
 export default router;
