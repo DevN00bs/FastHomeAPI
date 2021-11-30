@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getUserDetails } from "../controllers/profiles";
+import { getUserDetails, updateUserDetails } from "../controllers/profiles";
 import { getPropertiesList } from "../controllers/properties";
+import { UserDetailsRequest } from "../entities/profiles";
 import { PropertyFilters } from "../entities/properties";
 import auth from "../middleware/auth";
 import validation from "../middleware/validation";
@@ -106,5 +107,60 @@ router.get("/details", auth(), async (_req, res) => {
 
   res.json(details.result);
 });
+
+//#region
+/**
+ * PUT /api/profile/details
+ * @tags Profiles
+ * @summary Endpoint used to modify user's profile details
+ * @security TokenAuth
+ * @param {UserDetails} request.body.required - The details that you want to edit
+ * @return 204 - Everything went ok, the edition was successful
+ * @return {ValidationData} 400 - Some data is invalid, and we return an object detailing the error
+ * @return 403 - Token not delivered, so the user is probably not logged in
+ * @return 500 - Internal Server Error. If you see this ever, please tell us in the group
+ * @example request - Update email and phone (Partial)
+ * {
+ *  "email": "test@example.net",
+ *  "phone": "+17885458"
+ * }
+ * @example request - Update facebook link (Partial)
+ * {
+ *  "fbLink": "https://facebook.com/ExamplePerson"
+ * }
+ * @example request - Update mail and Twitter link (Full)
+ * {
+ *  "phone": "+528715555555",
+ *  "email": "newemail@example.net",
+ *  "fbLink": "https://facebook.com/example",
+ *  "instaLink": null,
+ *  "twitLink": "https://twitter.com/UpdatedProfile"
+ * }
+ * @example response - 400 - Invalid phone number
+ * {
+ *  "missing": [],
+ *  "invalid": [
+ *    "phone"
+ *  ]
+ * }
+ */
+//#endregion
+router.put(
+  "/details",
+  auth(),
+  validation(UserDetailsRequest),
+  async (_req, res) => {
+    const putDetails = await updateUserDetails(
+      res.locals.data,
+      res.locals.auth.userId
+    );
+
+    if (!putDetails.isSuccessful) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(204);
+  }
+);
 
 export default router;

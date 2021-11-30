@@ -2,6 +2,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { RequestHandler } from "express";
 import { ValidationData } from "../entities/auth";
+import { UserDetailsRequest } from "../entities/profiles";
 import {
   PartialPropertyRequest,
   PropertyFilters,
@@ -9,7 +10,7 @@ import {
 
 type source = "body" | "params" | "query";
 
-const optionals = [PartialPropertyRequest, PropertyFilters];
+const optionals = [PartialPropertyRequest, PropertyFilters, UserDetailsRequest];
 
 export default function validation(
   type: any,

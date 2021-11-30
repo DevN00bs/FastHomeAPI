@@ -1,3 +1,6 @@
+import { Expose } from "class-transformer";
+import { IsEmail, IsOptional, IsPhoneNumber, IsString } from "class-validator";
+
 /**
  * This entity contains contact details and social media of a user
  * @typedef {object} UserDetails
@@ -14,5 +17,30 @@ export class UserDetails {
   email!: string;
   fbLink!: string;
   instaLink!: string;
+  twitLink!: string;
+}
+
+export class UserDetailsRequest extends UserDetails {
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @IsPhoneNumber()
+  phone!: string;
+  @Expose()
+  @IsOptional()
+  @IsString()
+  @IsEmail()
+  email!: string;
+  @Expose()
+  @IsOptional()
+  @IsString()
+  fbLink!: string;
+  @Expose()
+  @IsOptional()
+  @IsString()
+  instaLink!: string;
+  @Expose()
+  @IsOptional()
+  @IsString()
   twitLink!: string;
 }
