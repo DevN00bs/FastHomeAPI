@@ -6,12 +6,14 @@ import {
   sendPasswordEmail,
   sendVerifyMail,
   verifyMail,
+  restorePassword,
 } from "../controllers/auth";
 import {
   ForgotPasswordData,
   LoginData,
   LinkData,
   RegistrationData,
+  PasswordRestoreData,
 } from "../entities/auth";
 import validation from "../middleware/validation";
 
@@ -167,5 +169,19 @@ router.get(
     res.sendStatus(200);
   }
 );
+
+router.post("/restore", validation(PasswordRestoreData), async (_req, res) => {
+  const restore = await restorePassword(res.locals.data);
+
+  if (!restore.isSuccessful) {
+    return res.sendStatus(500);
+  }
+
+  if (!restore.result) {
+    return res.sendStatus(403);
+  }
+
+  res.sendStatus(204);
+});
 
 export default router;

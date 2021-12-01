@@ -68,3 +68,14 @@ export class LinkData {
   @IsJWT()
   token!: string;
 }
+
+export class PasswordRestoreData {
+  @Expose()
+  @IsString()
+  @IsJWT()
+  token!: string;
+  @Expose()
+  @IsString()
+  @MaxLength(50)
+  password!: string;
+}
