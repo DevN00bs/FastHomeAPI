@@ -1,4 +1,9 @@
-import { RegistrationData, LoginData, LoginResult } from "../entities/auth";
+import {
+  RegistrationData,
+  LoginData,
+  LoginResult,
+  PasswordRestoreData,
+} from "../entities/auth";
 import { ControllerResponse } from "../entities/controller";
 import pool from "../conf/db";
 import bcrypt from "bcrypt";
@@ -233,4 +238,51 @@ async function createURL(purpose: string, userId: number): Promise<string> {
   conn.release();
 
   return `${process.env.FRONT}/${purpose}/${token}`;
+}
+
+export async function restorePassword(
+  data: PasswordRestoreData
+): Promise<ControllerResponse<boolean>> {
+  let conn;
+
+  try {
+    conn = await pool.getConnection();
+    const payload = jwt.verify(
+      data.token,
+      process.env.SECRET!
+    ) as jwt.JwtPayload;
+
+    if (!payload.purpose || payload.purpose !== "forgot") {
+      throw new jwt.JsonWebTokenError("Token not valid");
+    }
+
+    const dbToken = await conn.query(
+      "SELECT token FROM Users WHERE userId = ?",
+      payload.userId
+    );
+    if (data.token.substring(data.token.length - 20) !== dbToken[0].token) {
+      return { isSuccessful: true, result: false };
+    }
+
+    const hash = await bcrypt.hash(data.password, 10);
+    await conn.query("UPDATE Users SET encPassword = ? WHERE userId = ?", [
+      hash,
+      payload.userId,
+    ]);
+
+    invalidateToken(payload.userId);
+    return { isSuccessful: true, result: true };
+  } catch (error) {
+    if (
+      error instanceof jwt.JsonWebTokenError ||
+      error instanceof jwt.TokenExpiredError
+    ) {
+      return { isSuccessful: true, result: false };
+    }
+
+    console.error("Something went wrong", error);
+    return { isSuccessful: false };
+  } finally {
+    conn?.release();
+  }
 }
