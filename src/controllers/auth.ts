@@ -72,7 +72,7 @@ export async function loginUser(
     );
 
     if (!(await bcrypt.compare(data.password, userData[0].encPassword))) {
-      return { isSuccessful: false, result: { passwordsMatch: false } };
+      return { isSuccessful: true, result: { passwordsMatch: false } };
     }
 
     return {
