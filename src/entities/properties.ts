@@ -16,7 +16,7 @@ import {
 abstract class Property {
   @Expose()
   @IsString()
-  @MaxLength(40)
+  @MaxLength(150)
   address!: string;
   @Expose()
   @IsNumber({ maxDecimalPlaces: 2 })
