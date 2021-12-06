@@ -35,7 +35,7 @@ abstract class Property {
   price!: number;
   @Expose()
   @IsInt()
-  @Max(1)
+  @Max(2)
   @Min(1)
   @IsPositive()
   contractType!: number;
